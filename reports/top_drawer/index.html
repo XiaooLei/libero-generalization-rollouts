@@ -242,6 +242,33 @@
       min-width: 0;
     }
 
+    .seed-check {
+      border-top: 1px solid var(--line);
+      padding: 16px;
+      background: #fbfcfd;
+    }
+
+    .seed-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .seed-card {
+      min-width: 0;
+    }
+
+    .seed-card h4 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .seed-card video {
+      aspect-ratio: 1 / 1;
+    }
+
     .video-panel header {
       border: 0;
       background: transparent;
@@ -309,7 +336,8 @@
     @media (max-width: 860px) {
       .summary-grid,
       .case-details,
-      .case-body {
+      .case-body,
+      .seed-grid {
         grid-template-columns: 1fr;
       }
 
@@ -337,18 +365,19 @@
           <span>对比模型</span>
         </div>
         <div class="metric">
-          <strong>12</strong>
+          <strong>17</strong>
           <span>rollout 视频</span>
         </div>
         <div class="metric">
-          <strong>1</strong>
-          <span>自定义组合成功项</span>
+          <strong>3/5</strong>
+          <span>05 clean 成功</span>
         </div>
       </div>
       <div class="note">
         <strong>主要观察：</strong>人工检查显示结果是混合的：有些修改后的指令会被吸收到原始
         <code>bowl -> top drawer</code> 行为里；在当前保留的自定义对象组合中，
-        MolmoAct2 成功完成 <code>cream cheese -> drawer</code>，pi0.5 则抓了 bowl。
+        MolmoAct2 对 <code>cream cheese -> drawer</code> 的 5 次复跑都选中了 cream cheese，
+        但只有 3 次干净放入 drawer，pi0.5 的单次运行仍抓了 bowl。
       </div>
     </div>
   </header>
@@ -432,7 +461,7 @@
           <td><code>05</code></td>
           <td>自定义对象替换</td>
           <td>open the drawer and put the cream cheese inside</td>
-          <td><span class="status pass">抓了 cream cheese</span></td>
+          <td><span class="status pass">5/5 抓对；3/5 clean 成功</span></td>
           <td><span class="status fail">抓了 bowl，不是 cream cheese</span></td>
         </tr>
       </tbody>
@@ -444,7 +473,8 @@
       里没有出现过的完整对象-目标组合。在固定 <code>libero_goal/task_id=3</code> 场景下，
       <code>plate -> drawer</code> 和 <code>wine bottle -> drawer</code> 暴露出明显的原始任务先验：
       模型容易回到 <code>bowl -> top drawer</code>。<code>cream cheese -> drawer</code>
-      是当前唯一的正例：MolmoAct2 能跟随新组合，pi0.5 仍抓了 bowl。
+      是当前唯一较正向的例子：MolmoAct2 复跑 5 次都抓了 cream cheese，但只有 3 次干净放入 drawer，
+      说明对象 grounding 比前两个替换更好，最终操作稳定性仍不够；pi0.5 单次运行仍抓了 bowl。
       因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
     </div>
 
@@ -472,7 +502,7 @@
         </tr>
         <tr>
           <th>自定义组合成功例子</th>
-          <td>MolmoAct2 成功完成 <code>cream cheese -> drawer</code>。cream cheese 是 LIBERO 官方物体，但这个 drawer 组合不是 130 条官方 instruction 之一。</td>
+          <td>MolmoAct2 在 <code>cream cheese -> drawer</code> 上 5 次都选对 cream cheese，其中 3 次干净放入 drawer。cream cheese 是 LIBERO 官方物体，但这个 drawer 组合不是 130 条官方 instruction 之一。</td>
         </tr>
       </tbody>
     </table>
@@ -610,17 +640,82 @@
       <div class="case-details">
         <div class="case-detail"><strong>测试意义</strong><span>测试官方物体的自定义组合：<code>cream cheese -> drawer</code>。</span></div>
         <div class="case-detail"><strong>官方关系</strong><span>cream cheese 是官方物体，但官方 130 条里没有 cream cheese 放进 drawer 的 exact task。</span></div>
-        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 成功抓 cream cheese 并放进 drawer；pi0.5 抓了 bowl。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 5 次都抓了 cream cheese，3 次干净放入 drawer；pi0.5 单次运行抓了 bowl。</span></div>
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">抓了 cream cheese</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">3/5 clean 成功</span></header>
           <video controls preload="metadata" src="videos/molmoact2_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
         <article class="video-panel">
           <header><h4>pi0.5-libero</h4><span class="status fail">抓了 bowl，不是 cream cheese</span></header>
           <video controls preload="metadata" src="videos/pi05_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
+      </div>
+      <div class="seed-check">
+        <h3>05 MolmoAct2 复跑稳定性</h3>
+        <p class="small">
+          复跑 5 次，自动 success 全是 false，因为 BDDL 仍检查原始 <code>bowl -> top drawer</code>。
+          这里按人工标准判断：是否抓 cream cheese，以及是否把 cream cheese 干净放入 drawer。
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Seed</th>
+              <th>人工观察</th>
+              <th>结论</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>2000</code></td>
+              <td>抓了 cream cheese，并放进 drawer。</td>
+              <td><span class="status pass">成功</span></td>
+            </tr>
+            <tr>
+              <td><code>2001</code></td>
+              <td>抓了 cream cheese，但最后掉在 drawer 外侧附近。</td>
+              <td><span class="status fail">placement 失败</span></td>
+            </tr>
+            <tr>
+              <td><code>2002</code></td>
+              <td>抓了 cream cheese，并清楚放进 drawer。</td>
+              <td><span class="status pass">成功</span></td>
+            </tr>
+            <tr>
+              <td><code>2003</code></td>
+              <td>抓了 cream cheese，但末尾停在 drawer 口附近，不算干净释放。</td>
+              <td><span class="status pending">部分成功</span></td>
+            </tr>
+            <tr>
+              <td><code>2004</code></td>
+              <td>抓了 cream cheese，并清楚放进 drawer。</td>
+              <td><span class="status pass">成功</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card">
+            <h4>Seed 2000</h4>
+            <video controls preload="metadata" src="videos/molmoact2_05_cream_cheese_seed2000.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 2001</h4>
+            <video controls preload="metadata" src="videos/molmoact2_05_cream_cheese_seed2001.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 2002</h4>
+            <video controls preload="metadata" src="videos/molmoact2_05_cream_cheese_seed2002.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 2003</h4>
+            <video controls preload="metadata" src="videos/molmoact2_05_cream_cheese_seed2003.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 2004</h4>
+            <video controls preload="metadata" src="videos/molmoact2_05_cream_cheese_seed2004.mp4"></video>
+          </article>
+        </div>
       </div>
     </section>
 

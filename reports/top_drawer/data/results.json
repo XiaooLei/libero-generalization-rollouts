@@ -5,6 +5,42 @@
   "official_instruction": "open the top drawer and put the bowl inside",
   "original_benchmark_behavior": "bowl -> top drawer",
   "models": ["MolmoAct2-LIBERO", "pi0.5-libero"],
+  "stability_checks": [
+    {
+      "case_id": "05_object_swap_cream_cheese_drawer",
+      "model": "MolmoAct2-LIBERO",
+      "instruction": "open the drawer and put the cream cheese inside",
+      "num_trials": 5,
+      "manual_summary": "5/5 selected cream cheese; 3/5 cleanly placed it in the drawer; 1/5 partial/uncertain at drawer lip; 1/5 dropped it outside the drawer",
+      "trials": [
+        {
+          "seed": 2000,
+          "manual_check": "pass: picked cream cheese and placed it in the drawer",
+          "video": "videos/molmoact2_05_cream_cheese_seed2000.mp4"
+        },
+        {
+          "seed": 2001,
+          "manual_check": "fail: picked cream cheese but dropped it outside the drawer",
+          "video": "videos/molmoact2_05_cream_cheese_seed2001.mp4"
+        },
+        {
+          "seed": 2002,
+          "manual_check": "pass: picked cream cheese and placed it in the drawer",
+          "video": "videos/molmoact2_05_cream_cheese_seed2002.mp4"
+        },
+        {
+          "seed": 2003,
+          "manual_check": "partial: picked cream cheese, final placement is at/near the drawer lip and not cleanly released inside",
+          "video": "videos/molmoact2_05_cream_cheese_seed2003.mp4"
+        },
+        {
+          "seed": 2004,
+          "manual_check": "pass: picked cream cheese and placed it in the drawer",
+          "video": "videos/molmoact2_05_cream_cheese_seed2004.mp4"
+        }
+      ]
+    }
+  ],
   "rollouts": [
     {
       "id": "00",
