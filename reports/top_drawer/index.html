@@ -438,6 +438,16 @@
       </tbody>
     </table>
 
+    <h2>当前小结</h2>
+    <div class="note">
+      这组测试的核心不是复测 LIBERO 官方任务成功率，而是看两个 policy 能否执行官方 130 条 benchmark
+      里没有出现过的完整对象-目标组合。在固定 <code>libero_goal/task_id=3</code> 场景下，
+      <code>plate -> drawer</code> 和 <code>wine bottle -> drawer</code> 暴露出明显的原始任务先验：
+      模型容易回到 <code>bowl -> top drawer</code>。<code>cream cheese -> drawer</code>
+      是当前唯一的正例：MolmoAct2 能跟随新组合，pi0.5 仍抓了 bowl。
+      因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
+    </div>
+
     <h2>Case 设计与观察</h2>
     <p class="small">
       这些 case 聚焦当前 <code>open top drawer</code> 任务：有的是当前环境的官方任务，有的是同义改写，
