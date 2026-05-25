@@ -11,7 +11,7 @@ official instruction: open the top drawer and put the bowl inside
 original benchmark behavior: bowl -> top drawer
 ```
 
-The key finding is based on manual video inspection. The modified-instruction results are mixed: some rollouts place the `bowl` in the top drawer even when the instruction asks for another behavior, while MolmoAct2 succeeds on `cream cheese -> drawer`, `bowl -> plate`, `bowl -> stove`, and `bowl -> cabinet`. pi0.5 also succeeds on `bowl -> cabinet`.
+The key finding is based on manual video inspection. The modified-instruction results are mixed: some rollouts place the `bowl` in the top drawer even when the instruction asks for another behavior, while MolmoAct2 succeeds on `cream cheese -> drawer`, `bowl -> plate`, `bowl -> stove`, and `bowl -> cabinet`. pi0.5 succeeds on `bowl -> plate` and `bowl -> cabinet`.
 
 ## Reports
 

@@ -315,7 +315,7 @@
           <span>rollout videos</span>
         </div>
         <div class="metric">
-          <strong>4</strong>
+          <strong>5</strong>
           <span>positive non-current-task cases</span>
         </div>
       </div>
@@ -323,7 +323,8 @@
         <strong>Main signal:</strong> manual inspection shows mixed behavior: some modified instructions are absorbed
         into the original <code>bowl -> top drawer</code> behavior, while MolmoAct2 succeeds on
         <code>cream cheese -> drawer</code>, <code>bowl -> plate</code>, <code>bowl -> stove</code>,
-        and <code>bowl -> cabinet</code>. pi0.5 also succeeds on <code>bowl -> cabinet</code>.
+        and <code>bowl -> cabinet</code>. pi0.5 succeeds on <code>bowl -> plate</code> and
+        <code>bowl -> cabinet</code>.
       </div>
     </div>
   </header>
@@ -417,7 +418,7 @@
           <td>Relation swap</td>
           <td>put the bowl on the plate</td>
           <td><span class="status pass">put bowl on plate</span></td>
-          <td><span class="status pending">pending</span></td>
+          <td><span class="status pass">put bowl on plate</span></td>
         </tr>
         <tr>
           <td><code>07</code></td>
@@ -566,7 +567,7 @@
           <video controls preload="metadata" src="videos/molmoact2_06_relation_swap_bowl_on_plate.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pending">manual pending</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">put bowl on plate</span></header>
           <video controls preload="metadata" src="videos/pi05_06_relation_swap_bowl_on_plate.mp4"></video>
         </article>
       </div>
