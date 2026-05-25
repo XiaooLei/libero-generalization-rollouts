@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LIBERO Top Drawer Instruction Generalization</title>
+  <title>LIBERO Top Drawer 指令泛化测试</title>
   <style>
     :root {
       color-scheme: light;
@@ -212,6 +212,32 @@
       padding: 16px;
     }
 
+    .case-details {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .case-detail {
+      min-width: 0;
+    }
+
+    .case-detail strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #303741;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .case-detail span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .video-panel {
       min-width: 0;
     }
@@ -282,6 +308,7 @@
 
     @media (max-width: 860px) {
       .summary-grid,
+      .case-details,
       .case-body {
         grid-template-columns: 1fr;
       }
@@ -296,41 +323,40 @@
 <body>
   <header>
     <div class="inner hero">
-      <h1>LIBERO Top Drawer Instruction Generalization</h1>
+      <h1>LIBERO Top Drawer 指令泛化测试</h1>
       <p class="lead">
-        A focused probe on whether high-scoring LIBERO policies follow changed object instructions in a fixed
-        <code>libero_goal/task_id=3</code> environment.
+        固定 <code>libero_goal/task_id=3</code> 环境，只改变传给 policy 的自然语言指令，观察高分 LIBERO policy 是否真的按新指令改变对象和目标关系。
       </p>
       <div class="summary-grid">
         <div class="metric">
           <strong>1</strong>
-          <span>fixed LIBERO task</span>
+          <span>固定 LIBERO task</span>
         </div>
         <div class="metric">
           <strong>2</strong>
-          <span>policies compared</span>
+          <span>对比模型</span>
         </div>
         <div class="metric">
           <strong>18</strong>
-          <span>rollout videos</span>
+          <span>rollout 视频</span>
         </div>
         <div class="metric">
           <strong>6</strong>
-          <span>positive non-current-task cases</span>
+          <span>非当前任务成功项</span>
         </div>
       </div>
       <div class="note">
-        <strong>Main signal:</strong> manual inspection shows mixed behavior: some modified instructions are absorbed
-        into the original <code>bowl -> top drawer</code> behavior, while MolmoAct2 succeeds on
-        <code>cream cheese -> drawer</code>, <code>bowl -> plate</code>, <code>bowl -> stove</code>,
-        and <code>bowl -> cabinet</code>. pi0.5 succeeds on <code>bowl -> plate</code>,
-        <code>bowl -> stove</code>, and <code>bowl -> cabinet</code>.
+        <strong>主要观察：</strong>人工检查显示结果是混合的：有些修改后的指令会被吸收到原始
+        <code>bowl -> top drawer</code> 行为里；同时，MolmoAct2 在
+        <code>cream cheese -> drawer</code>、<code>bowl -> plate</code>、<code>bowl -> stove</code>
+        和 <code>bowl -> cabinet</code> 上成功，pi0.5 在 <code>bowl -> plate</code>、
+        <code>bowl -> stove</code> 和 <code>bowl -> cabinet</code> 上成功。
       </div>
     </div>
   </header>
 
   <main>
-    <h2>Setup</h2>
+    <h2>实验设置</h2>
     <table>
       <tbody>
         <tr>
@@ -342,30 +368,28 @@
           <td><code>3</code></td>
         </tr>
         <tr>
-          <th>Official instruction</th>
+          <th>当前环境官方 instruction</th>
           <td><code>open the top drawer and put the bowl inside</code></td>
         </tr>
         <tr>
-          <th>Original benchmark behavior</th>
+          <th>原始 benchmark 行为</th>
           <td><code>bowl -> top drawer</code></td>
         </tr>
       </tbody>
     </table>
 
-    <h2>Main Comparison</h2>
+    <h2>主对比表</h2>
     <p class="small">
-      "Official" means the exact task used in this fixed environment. Some objects, such as cream cheese, do appear
-      in other official LIBERO tasks, but the full instruction <code>open the drawer and put the cream cheese inside</code>
-      is a custom instruction in this report.
-      Relation-swap instructions may also be official LIBERO instructions from other task IDs, but they are not the
-      official instruction for this fixed <code>libero_goal/task_id=3</code> environment.
+      这里的 “official” 指当前固定环境 <code>libero_goal/task_id=3</code> 的原始官方任务。
+      一些物体或关系本身可能出现在 LIBERO 其他官方任务里，例如 cream cheese 或 bowl on plate，
+      但如果不是当前 task 的原始 instruction，在本文中会标成 custom composition 或 cross-task relation probe。
     </p>
     <table>
       <thead>
         <tr>
           <th>ID</th>
-          <th>Type</th>
-          <th>Instruction</th>
+          <th>类型</th>
+          <th>Instruction（英文原文）</th>
           <th>MolmoAct2-LIBERO</th>
           <th>pi0.5-libero</th>
         </tr>
@@ -373,188 +397,124 @@
       <tbody>
         <tr>
           <td><code>00</code></td>
-          <td>Official</td>
+          <td>当前官方任务</td>
           <td>open the top drawer and put the bowl inside</td>
-          <td><span class="status pass">pass</span></td>
-          <td><span class="status pass">pass</span></td>
+          <td><span class="status pass">成功</span></td>
+          <td><span class="status pass">成功</span></td>
         </tr>
         <tr>
           <td><code>01</code></td>
-          <td>Paraphrase</td>
+          <td>同义改写</td>
           <td>put the bowl in the top drawer of the cabinet</td>
-          <td><span class="status neutral">not successful</span></td>
-          <td><span class="status pass">pass</span></td>
+          <td><span class="status neutral">未成功</span></td>
+          <td><span class="status pass">成功</span></td>
         </tr>
         <tr>
           <td><code>02</code></td>
-          <td>Paraphrase</td>
+          <td>同义改写</td>
           <td>pull open the upper drawer, then place the bowl inside</td>
-          <td><span class="status pass">pass</span></td>
-          <td><span class="status pass">pass</span></td>
+          <td><span class="status pass">成功</span></td>
+          <td><span class="status pass">成功</span></td>
         </tr>
         <tr>
           <td><code>03</code></td>
-          <td>Custom object swap</td>
+          <td>自定义对象替换</td>
           <td>open the drawer and put the plate inside</td>
-          <td><span class="status fail">picked bowl, not plate</span></td>
-          <td><span class="status fail">picked bowl, not plate</span></td>
+          <td><span class="status fail">抓了 bowl，不是 plate</span></td>
+          <td><span class="status fail">抓了 bowl，不是 plate</span></td>
         </tr>
         <tr>
           <td><code>04</code></td>
-          <td>Custom object swap</td>
+          <td>自定义对象替换</td>
           <td>open the drawer and put the wine bottle inside</td>
-          <td><span class="status fail">picked bowl, not wine bottle</span></td>
-          <td><span class="status neutral">not successful</span></td>
+          <td><span class="status fail">抓了 bowl，不是 wine bottle</span></td>
+          <td><span class="status neutral">未成功</span></td>
         </tr>
         <tr>
           <td><code>05</code></td>
-          <td>Custom object swap</td>
+          <td>自定义对象替换</td>
           <td>open the drawer and put the cream cheese inside</td>
-          <td><span class="status pass">picked cream cheese</span></td>
-          <td><span class="status fail">picked bowl, not cream cheese</span></td>
+          <td><span class="status pass">抓了 cream cheese</span></td>
+          <td><span class="status fail">抓了 bowl，不是 cream cheese</span></td>
         </tr>
         <tr>
           <td><code>06</code></td>
-          <td>Relation swap</td>
+          <td>关系替换</td>
           <td>put the bowl on the plate</td>
-          <td><span class="status pass">put bowl on plate</span></td>
-          <td><span class="status pass">put bowl on plate</span></td>
+          <td><span class="status pass">bowl 放到 plate 上</span></td>
+          <td><span class="status pass">bowl 放到 plate 上</span></td>
         </tr>
         <tr>
           <td><code>07</code></td>
-          <td>Relation swap</td>
+          <td>关系替换</td>
           <td>put the bowl on the stove</td>
-          <td><span class="status pass">put bowl on stove</span></td>
-          <td><span class="status pass">put bowl on stove</span></td>
+          <td><span class="status pass">bowl 放到 stove 上</span></td>
+          <td><span class="status pass">bowl 放到 stove 上</span></td>
         </tr>
         <tr>
           <td><code>08</code></td>
-          <td>Relation swap</td>
+          <td>关系替换</td>
           <td>put the bowl on top of the cabinet</td>
-          <td><span class="status pass">put bowl on cabinet</span></td>
-          <td><span class="status pass">put bowl on cabinet</span></td>
+          <td><span class="status pass">bowl 放到 cabinet 上</span></td>
+          <td><span class="status pass">bowl 放到 cabinet 上</span></td>
         </tr>
       </tbody>
     </table>
 
-    <h2>Case Design and Observations</h2>
+    <h2>Case 设计与观察</h2>
     <p class="small">
-      The cases are not all the same kind of OOD. Some are exact official tasks, some are paraphrases,
-      some are custom object-target compositions, and some are official LIBERO instructions from other task IDs
-      run inside the fixed <code>libero_goal/task_id=3</code> environment.
+      这些 case 不是同一种 OOD：有的是当前环境的官方任务，有的是同义改写，有的是自定义对象-目标组合，
+      也有的是把 LIBERO 其他 task id 的官方 instruction 放到当前固定 <code>libero_goal/task_id=3</code> 环境里执行。
     </p>
 
-    <h3>Overall Observations</h3>
+    <h3>整体观察</h3>
     <table>
       <tbody>
         <tr>
-          <th>Official current task</th>
-          <td>Both models can solve the original <code>bowl -> top drawer</code> task.</td>
+          <th>当前官方任务</th>
+          <td>两个模型都能完成原始 <code>bowl -> top drawer</code> 任务。</td>
         </tr>
         <tr>
-          <th>Paraphrase robustness</th>
-          <td>pi0.5 handles both paraphrases in this run. MolmoAct2 handles the "upper drawer" paraphrase but not the "top drawer of the cabinet" wording.</td>
+          <th>同义改写鲁棒性</th>
+          <td>pi0.5 在本次运行中完成了两条 paraphrase。MolmoAct2 完成了 “upper drawer” 这条改写，但没有完成 “top drawer of the cabinet” 这条表达。</td>
         </tr>
         <tr>
-          <th>Object grounding</th>
-          <td>Both models can be absorbed into the original bowl behavior on some object swaps. The clearest failures are plate drawer for both models, wine bottle drawer for MolmoAct2, and cream cheese drawer for pi0.5.</td>
+          <th>对象 grounding</th>
+          <td>两个模型在部分对象替换上会被原始 bowl 行为吸收。最清楚的失败包括：两个模型的 plate drawer、MolmoAct2 的 wine bottle drawer、pi0.5 的 cream cheese drawer。</td>
         </tr>
         <tr>
-          <th>Positive custom composition</th>
-          <td>MolmoAct2 succeeds on <code>cream cheese -> drawer</code>, which is not an official 130-task instruction even though cream cheese is an official LIBERO object.</td>
+          <th>自定义组合成功例子</th>
+          <td>MolmoAct2 成功完成 <code>cream cheese -> drawer</code>。cream cheese 是 LIBERO 官方物体，但这个 drawer 组合不是 130 条官方 instruction 之一。</td>
         </tr>
         <tr>
-          <th>Cross-task relation transfer</th>
-          <td>Relation probes are stronger than a pure OOD label: <code>bowl -> plate</code>, <code>bowl -> stove</code>, and <code>bowl -> cabinet</code> are official LIBERO instructions from other task IDs. Both models succeed on all three relation probes in this run.</td>
+          <th>跨任务关系迁移</th>
+          <td>relation probe 不能简单叫全局 OOD：<code>bowl -> plate</code>、<code>bowl -> stove</code>、<code>bowl -> cabinet</code> 都是 LIBERO 其他 task id 里的官方 instruction。两个模型在本次运行中都完成了这三条关系迁移。</td>
         </tr>
       </tbody>
     </table>
 
-    <h3>Per-Case Meaning</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>What This Tests</th>
-          <th>Official Benchmark Relationship</th>
-          <th>Observation</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>00</code></td>
-          <td>Baseline: verifies that the policies, environment, and rollout setup can solve the original task.</td>
-          <td>Exact current task: <code>libero_goal/3</code>.</td>
-          <td>Both MolmoAct2 and pi0.5 complete <code>bowl -> top drawer</code>.</td>
-        </tr>
-        <tr>
-          <td><code>01</code></td>
-          <td>Language paraphrase robustness without changing object or target relation.</td>
-          <td>No exact official instruction match; semantically a paraphrase of <code>libero_goal/3</code>.</td>
-          <td>pi0.5 succeeds. MolmoAct2 does not complete this wording in this run.</td>
-        </tr>
-        <tr>
-          <td><code>02</code></td>
-          <td>Another paraphrase of the same task, using "upper drawer" and explicit temporal ordering.</td>
-          <td>No exact official instruction match; semantically a paraphrase of <code>libero_goal/3</code>.</td>
-          <td>Both models succeed, so this wording does not break the original task behavior.</td>
-        </tr>
-        <tr>
-          <td><code>03</code></td>
-          <td>Object grounding under a custom drawer instruction: replace <code>bowl</code> with <code>plate</code>.</td>
-          <td>No exact official instruction match in the 130 tasks.</td>
-          <td>Both models fail the custom instruction by picking the bowl instead of the plate.</td>
-        </tr>
-        <tr>
-          <td><code>04</code></td>
-          <td>Object grounding under a custom drawer instruction: replace <code>bowl</code> with <code>wine bottle</code>.</td>
-          <td>No exact match for this instruction. Related official task: <code>libero_90/26</code> puts the wine bottle in the bottom drawer.</td>
-          <td>MolmoAct2 picks the bowl instead of the wine bottle. pi0.5 does not complete the requested behavior in this run.</td>
-        </tr>
-        <tr>
-          <td><code>05</code></td>
-          <td>Custom object-target composition with an official LIBERO object: <code>cream cheese -> drawer</code>.</td>
-          <td>No exact official instruction match. Cream cheese appears in official tasks, but not as a drawer-placement target.</td>
-          <td>MolmoAct2 succeeds by picking the cream cheese and placing it in the drawer. pi0.5 picks the bowl instead.</td>
-        </tr>
-        <tr>
-          <td><code>06</code></td>
-          <td>Cross-task relation transfer: switch from <code>in(top drawer)</code> to <code>on(plate)</code> while keeping the object as bowl.</td>
-          <td>Exact official instruction exists as <code>libero_goal/8</code>, but this rollout is executed in the fixed <code>libero_goal/3</code> environment.</td>
-          <td>Both models put the bowl on the plate.</td>
-        </tr>
-        <tr>
-          <td><code>07</code></td>
-          <td>Cross-task relation transfer: switch from drawer placement to placing the bowl on the stove.</td>
-          <td>Exact official instruction exists as <code>libero_goal/1</code>, but this rollout is executed in the fixed <code>libero_goal/3</code> environment.</td>
-          <td>Both models put the bowl on the stove.</td>
-        </tr>
-        <tr>
-          <td><code>08</code></td>
-          <td>Cross-task relation transfer: switch from putting the bowl inside the drawer to putting it on top of the cabinet.</td>
-          <td>Exact official instruction exists as <code>libero_goal/4</code>, but this rollout is executed in the fixed <code>libero_goal/3</code> environment.</td>
-          <td>Both models put the bowl on top of the cabinet.</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h2>Rollout Videos</h2>
-    <p class="small">Each case shows the MolmoAct2-LIBERO rollout on the left and the pi0.5-libero rollout on the right.</p>
+    <h2>Rollout 视频与逐 case 解释</h2>
+    <p class="small">每个卡片左侧是 MolmoAct2-LIBERO，右侧是 pi0.5-libero。卡片顶部直接写明这个 case 要测什么、和官方 benchmark 的关系、以及人工观察结论。</p>
 
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>00 Official task</h3>
+          <h3>00 当前官方任务</h3>
           <div class="case-meta">open the top drawer and put the bowl inside</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>Baseline：确认模型、环境和 rollout 设置能正常完成原始任务。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>当前固定环境的原始任务：<code>libero_goal/3</code>。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>两个模型都完成 <code>bowl -> top drawer</code>。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">pass</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">成功</span></header>
           <video controls preload="metadata" src="videos/molmoact2_00_exact_train_like_bowl_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pass">pass</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">成功</span></header>
           <video controls preload="metadata" src="videos/pi05_00_exact_train_like_bowl_drawer.mp4"></video>
         </article>
       </div>
@@ -563,17 +523,22 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>01 Paraphrase</h3>
+          <h3>01 同义改写</h3>
           <div class="case-meta">put the bowl in the top drawer of the cabinet</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>不改变对象和目标关系，只测试语言表达变化是否影响执行。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>没有官方 exact match；语义上是 <code>libero_goal/3</code> 的 paraphrase。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>pi0.5 成功；MolmoAct2 在这条 wording 下未完成。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">未成功</span></header>
           <video controls preload="metadata" src="videos/molmoact2_01_paraphrase_bowl_drawer_cabinet.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pass">pass</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">成功</span></header>
           <video controls preload="metadata" src="videos/pi05_01_paraphrase_bowl_drawer_cabinet.mp4"></video>
         </article>
       </div>
@@ -582,17 +547,22 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>02 Paraphrase</h3>
+          <h3>02 同义改写</h3>
           <div class="case-meta">pull open the upper drawer, then place the bowl inside</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>另一种同义改写，使用 “upper drawer” 和显式时序表达。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>没有官方 exact match；语义上仍是 <code>libero_goal/3</code>。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>两个模型都成功，说明这条改写没有破坏原始任务行为。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">pass</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">成功</span></header>
           <video controls preload="metadata" src="videos/molmoact2_02_paraphrase_upper_drawer_bowl.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pass">pass</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">成功</span></header>
           <video controls preload="metadata" src="videos/pi05_02_paraphrase_upper_drawer_bowl.mp4"></video>
         </article>
       </div>
@@ -601,17 +571,22 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>03 Custom object swap: plate</h3>
+          <h3>03 自定义对象替换：plate</h3>
           <div class="case-meta">open the drawer and put the plate inside</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>测试对象 grounding：把原始 <code>bowl</code> 替换成 <code>plate</code>，目标仍是 drawer。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>130 条官方任务里没有这条 exact instruction。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>两个模型都失败：实际抓了 bowl，不是 plate。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status fail">picked bowl, not plate</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status fail">抓了 bowl，不是 plate</span></header>
           <video controls preload="metadata" src="videos/molmoact2_03_object_swap_plate_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status fail">picked bowl, not plate</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status fail">抓了 bowl，不是 plate</span></header>
           <video controls preload="metadata" src="videos/pi05_03_object_swap_plate_drawer.mp4"></video>
         </article>
       </div>
@@ -620,17 +595,22 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>04 Custom object swap: wine bottle</h3>
+          <h3>04 自定义对象替换：wine bottle</h3>
           <div class="case-meta">open the drawer and put the wine bottle inside</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>测试对象 grounding：把目标对象换成 <code>wine bottle</code>。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>这条没有 exact match；相关官方任务 <code>libero_90/26</code> 是把 wine bottle 放进 bottom drawer。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 抓了 bowl，不是 wine bottle；pi0.5 未完成该请求。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status fail">picked bowl, not wine bottle</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status fail">抓了 bowl，不是 wine bottle</span></header>
           <video controls preload="metadata" src="videos/molmoact2_04_object_swap_wine_bottle_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status neutral">not successful</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status neutral">未成功</span></header>
           <video controls preload="metadata" src="videos/pi05_04_object_swap_wine_bottle_drawer.mp4"></video>
         </article>
       </div>
@@ -639,17 +619,22 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>05 Custom object swap: cream cheese</h3>
-          <div class="case-meta">open the drawer and put the cream cheese inside; cream cheese is an official LIBERO object, but this drawer task is custom</div>
+          <h3>05 自定义对象替换：cream cheese</h3>
+          <div class="case-meta">open the drawer and put the cream cheese inside</div>
         </div>
+      </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>测试官方物体的自定义组合：<code>cream cheese -> drawer</code>。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>cream cheese 是官方物体，但官方 130 条里没有 cream cheese 放进 drawer 的 exact task。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 成功抓 cream cheese 并放进 drawer；pi0.5 抓了 bowl。</span></div>
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">picked cream cheese</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">抓了 cream cheese</span></header>
           <video controls preload="metadata" src="videos/molmoact2_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status fail">picked bowl, not cream cheese</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status fail">抓了 bowl，不是 cream cheese</span></header>
           <video controls preload="metadata" src="videos/pi05_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
       </div>
@@ -658,17 +643,22 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>06 Relation swap: bowl on plate</h3>
+          <h3>06 关系替换：bowl on plate</h3>
           <div class="case-meta">put the bowl on the plate</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>跨任务关系迁移：对象仍是 bowl，但关系从 <code>in(top drawer)</code> 切到 <code>on(plate)</code>。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>这条是官方 instruction：<code>libero_goal/8</code>，但本次是在固定 <code>libero_goal/3</code> 环境里运行。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>两个模型都把 bowl 放到了 plate 上。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">put bowl on plate</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">bowl 放到 plate 上</span></header>
           <video controls preload="metadata" src="videos/molmoact2_06_relation_swap_bowl_on_plate.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pass">put bowl on plate</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">bowl 放到 plate 上</span></header>
           <video controls preload="metadata" src="videos/pi05_06_relation_swap_bowl_on_plate.mp4"></video>
         </article>
       </div>
@@ -677,17 +667,22 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>07 Relation swap: bowl on stove</h3>
+          <h3>07 关系替换：bowl on stove</h3>
           <div class="case-meta">put the bowl on the stove</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>跨任务关系迁移：从 drawer 放置切换到把 bowl 放到 stove 上。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>这条是官方 instruction：<code>libero_goal/1</code>，但本次是在固定 <code>libero_goal/3</code> 环境里运行。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>两个模型都把 bowl 放到了 stove 上。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">put bowl on stove</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">bowl 放到 stove 上</span></header>
           <video controls preload="metadata" src="videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pass">put bowl on stove</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">bowl 放到 stove 上</span></header>
           <video controls preload="metadata" src="videos/pi05_07_relation_swap_bowl_on_stove.mp4"></video>
         </article>
       </div>
@@ -696,123 +691,128 @@
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>08 Relation swap: bowl on cabinet</h3>
+          <h3>08 关系替换：bowl on cabinet</h3>
           <div class="case-meta">put the bowl on top of the cabinet</div>
         </div>
       </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>跨任务关系迁移：从把 bowl 放进 drawer，切换到把 bowl 放到 cabinet 顶部。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>这条是官方 instruction：<code>libero_goal/4</code>，但本次是在固定 <code>libero_goal/3</code> 环境里运行。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>两个模型都把 bowl 放到了 cabinet 顶部。</span></div>
+      </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">put bowl on cabinet</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">bowl 放到 cabinet 上</span></header>
           <video controls preload="metadata" src="videos/molmoact2_08_relation_swap_bowl_on_cabinet.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pass">put bowl on cabinet</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">bowl 放到 cabinet 上</span></header>
           <video controls preload="metadata" src="videos/pi05_08_relation_swap_bowl_on_cabinet.mp4"></video>
         </article>
       </div>
     </section>
 
-    <h2>Appendix: Official LIBERO Instructions</h2>
+    <h2>附录：Official LIBERO Instructions（英文原文）</h2>
     <p class="small">
-      This appendix lists the official 130 LIBERO benchmark instructions. Use it to check whether a rollout
-      instruction is an exact benchmark instruction, a paraphrase of the current task, or a custom composition.
+      这里列出 LIBERO 官方 130 条 benchmark instruction。所有 instruction 均保留英文原文，不做中文翻译，
+      方便对照当前 rollout instruction 到底是官方原题、当前任务 paraphrase、其他 task 的官方 instruction，还是自定义组合。
     </p>
 
-    <h3>Current Rollout Cross-Check</h3>
+    <h3>当前 Rollout 对照</h3>
     <table>
       <thead>
         <tr>
           <th>ID</th>
-          <th>Instruction</th>
-          <th>Current fixed task?</th>
-          <th>Exact official instruction in 130?</th>
+          <th>Instruction（英文原文）</th>
+          <th>相对当前固定任务的性质</th>
+          <th>是否命中官方 130 条 exact instruction</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><code>00</code></td>
           <td>open the top drawer and put the bowl inside</td>
-          <td><span class="status pass">official current task</span></td>
+          <td><span class="status pass">当前官方任务</span></td>
           <td><code>libero_goal/3</code></td>
         </tr>
         <tr>
           <td><code>01</code></td>
           <td>put the bowl in the top drawer of the cabinet</td>
-          <td><span class="status neutral">paraphrase of current task</span></td>
-          <td>No exact match</td>
+          <td><span class="status neutral">当前任务 paraphrase</span></td>
+          <td>无 exact match</td>
         </tr>
         <tr>
           <td><code>02</code></td>
           <td>pull open the upper drawer, then place the bowl inside</td>
-          <td><span class="status neutral">paraphrase of current task</span></td>
-          <td>No exact match</td>
+          <td><span class="status neutral">当前任务 paraphrase</span></td>
+          <td>无 exact match</td>
         </tr>
         <tr>
           <td><code>03</code></td>
           <td>open the drawer and put the plate inside</td>
-          <td><span class="status fail">custom composition</span></td>
-          <td>No exact match</td>
+          <td><span class="status fail">自定义组合</span></td>
+          <td>无 exact match</td>
         </tr>
         <tr>
           <td><code>04</code></td>
           <td>open the drawer and put the wine bottle inside</td>
-          <td><span class="status fail">custom composition</span></td>
-          <td>No exact match; related: <code>libero_90/26</code> puts wine bottle in bottom drawer</td>
+          <td><span class="status fail">自定义组合</span></td>
+          <td>无 exact match；相关官方任务：<code>libero_90/26</code> 把 wine bottle 放进 bottom drawer</td>
         </tr>
         <tr>
           <td><code>05</code></td>
           <td>open the drawer and put the cream cheese inside</td>
-          <td><span class="status fail">custom composition</span></td>
-          <td>No exact match; cream cheese appears in official tasks, but not drawer tasks</td>
+          <td><span class="status fail">自定义组合</span></td>
+          <td>无 exact match；cream cheese 出现在官方任务中，但没有 drawer 放置任务</td>
         </tr>
         <tr>
           <td><code>06</code></td>
           <td>put the bowl on the plate</td>
-          <td><span class="status neutral">cross-task relation probe</span></td>
+          <td><span class="status neutral">跨任务关系测试</span></td>
           <td><code>libero_goal/8</code></td>
         </tr>
         <tr>
           <td><code>07</code></td>
           <td>put the bowl on the stove</td>
-          <td><span class="status neutral">cross-task relation probe</span></td>
+          <td><span class="status neutral">跨任务关系测试</span></td>
           <td><code>libero_goal/1</code></td>
         </tr>
         <tr>
           <td><code>08</code></td>
           <td>put the bowl on top of the cabinet</td>
-          <td><span class="status neutral">cross-task relation probe</span></td>
+          <td><span class="status neutral">跨任务关系测试</span></td>
           <td><code>libero_goal/4</code></td>
         </tr>
       </tbody>
     </table>
 
-    <h3>All Official Benchmark Instructions</h3>
+    <h3>全部官方 Benchmark Instructions</h3>
     <div class="appendix-controls">
-      <select id="official-suite-filter" aria-label="Filter official instructions by suite">
-        <option value="">All suites</option>
+      <select id="official-suite-filter" aria-label="按 suite 筛选官方 instruction">
+        <option value="">全部 suites</option>
       </select>
-      <input id="official-search" type="search" placeholder="Search official instructions, e.g. cream cheese, drawer, bowl on plate" aria-label="Search official instructions">
-      <span id="official-count" class="appendix-count">Loading...</span>
+      <input id="official-search" type="search" placeholder="搜索官方 instruction，例如 cream cheese, drawer, bowl on plate" aria-label="搜索官方 instruction">
+      <span id="official-count" class="appendix-count">加载中...</span>
     </div>
     <table>
       <thead>
         <tr>
           <th>Suite</th>
           <th>Task ID</th>
-          <th>Official Instruction</th>
+          <th>Official Instruction（英文原文）</th>
         </tr>
       </thead>
       <tbody id="official-instructions-body">
         <tr>
-          <td colspan="3">Loading official LIBERO instructions...</td>
+          <td colspan="3">正在加载 LIBERO 官方 instructions...</td>
         </tr>
       </tbody>
     </table>
 
     <footer>
-      Data files: <a href="data/results.json">results.json</a>,
+      数据文件：<a href="data/results.json">results.json</a>,
       <a href="data/libero_official_instructions.json">libero_official_instructions.json</a>.
-      Methodology: <a href="../../docs/methodology.md">docs/methodology.md</a>.
+      方法说明：<a href="../../docs/methodology.md">docs/methodology.md</a>.
     </footer>
   </main>
   <script>
@@ -838,7 +838,7 @@
           <td>${task.task_id}</td>
           <td>${task.language}</td>
         </tr>
-      `).join("") || `<tr><td colspan="3">No matching official instruction.</td></tr>`;
+      `).join("") || `<tr><td colspan="3">没有匹配的官方 instruction。</td></tr>`;
     }
 
     fetch("data/libero_official_instructions.json")
@@ -853,8 +853,8 @@
         renderOfficialInstructions();
       })
       .catch(() => {
-        officialCount.textContent = "Failed to load official instructions";
-        officialBody.innerHTML = `<tr><td colspan="3">Could not load data/libero_official_instructions.json.</td></tr>`;
+        officialCount.textContent = "加载官方 instructions 失败";
+        officialBody.innerHTML = `<tr><td colspan="3">无法加载 data/libero_official_instructions.json。</td></tr>`;
       });
 
     officialSearch.addEventListener("input", renderOfficialInstructions);
