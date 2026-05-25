@@ -129,7 +129,7 @@
         "video": "videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"
       },
       "pi05": {
-        "manual_check": "pending",
+        "manual_check": "pass: put bowl on stove",
         "steps": 300,
         "video": "videos/pi05_07_relation_swap_bowl_on_stove.mp4"
       }

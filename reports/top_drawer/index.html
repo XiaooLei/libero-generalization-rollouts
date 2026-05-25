@@ -315,7 +315,7 @@
           <span>rollout videos</span>
         </div>
         <div class="metric">
-          <strong>5</strong>
+          <strong>6</strong>
           <span>positive non-current-task cases</span>
         </div>
       </div>
@@ -323,8 +323,8 @@
         <strong>Main signal:</strong> manual inspection shows mixed behavior: some modified instructions are absorbed
         into the original <code>bowl -> top drawer</code> behavior, while MolmoAct2 succeeds on
         <code>cream cheese -> drawer</code>, <code>bowl -> plate</code>, <code>bowl -> stove</code>,
-        and <code>bowl -> cabinet</code>. pi0.5 succeeds on <code>bowl -> plate</code> and
-        <code>bowl -> cabinet</code>.
+        and <code>bowl -> cabinet</code>. pi0.5 succeeds on <code>bowl -> plate</code>,
+        <code>bowl -> stove</code>, and <code>bowl -> cabinet</code>.
       </div>
     </div>
   </header>
@@ -425,7 +425,7 @@
           <td>Relation swap</td>
           <td>put the bowl on the stove</td>
           <td><span class="status pass">put bowl on stove</span></td>
-          <td><span class="status pending">pending</span></td>
+          <td><span class="status pass">put bowl on stove</span></td>
         </tr>
         <tr>
           <td><code>08</code></td>
@@ -465,7 +465,7 @@
         </tr>
         <tr>
           <th>Cross-task relation transfer</th>
-          <td>Relation probes are stronger than a pure OOD label: <code>bowl -> plate</code>, <code>bowl -> stove</code>, and <code>bowl -> cabinet</code> are official LIBERO instructions from other task IDs. MolmoAct2 succeeds on all three; pi0.5 succeeds on <code>bowl -> plate</code> and <code>bowl -> cabinet</code>, while <code>bowl -> stove</code> is still pending manual labeling.</td>
+          <td>Relation probes are stronger than a pure OOD label: <code>bowl -> plate</code>, <code>bowl -> stove</code>, and <code>bowl -> cabinet</code> are official LIBERO instructions from other task IDs. Both models succeed on all three relation probes in this run.</td>
         </tr>
       </tbody>
     </table>
@@ -527,7 +527,7 @@
           <td><code>07</code></td>
           <td>Cross-task relation transfer: switch from drawer placement to placing the bowl on the stove.</td>
           <td>Exact official instruction exists as <code>libero_goal/1</code>, but this rollout is executed in the fixed <code>libero_goal/3</code> environment.</td>
-          <td>MolmoAct2 puts the bowl on the stove. pi0.5 is still pending manual labeling.</td>
+          <td>Both models put the bowl on the stove.</td>
         </tr>
         <tr>
           <td><code>08</code></td>
@@ -687,7 +687,7 @@
           <video controls preload="metadata" src="videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status pending">manual pending</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">put bowl on stove</span></header>
           <video controls preload="metadata" src="videos/pi05_07_relation_swap_bowl_on_stove.mp4"></video>
         </article>
       </div>
