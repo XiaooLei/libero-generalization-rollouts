@@ -365,7 +365,7 @@
           <span>对比模型</span>
         </div>
         <div class="metric">
-          <strong>27</strong>
+          <strong>32</strong>
           <span>rollout 视频</span>
         </div>
         <div class="metric">
@@ -378,7 +378,8 @@
         <code>bowl -> top drawer</code> 行为里；在当前保留的自定义对象组合中，
         MolmoAct2 对 <code>cream cheese -> drawer</code> 的 5 次复跑都选中了 cream cheese，
         但只有 3 次干净放入 drawer；进一步要求 <code>cream cheese -> bottom drawer</code> 时，
-        MolmoAct2 0/5 完成完整组合，说明当前正例不能简单外推到更强组合。
+        MolmoAct2 0/5 完成完整组合；只测试 <code>bowl -> bottom drawer</code> 时也 0/5 使用 bottom drawer，
+        说明当前正例不能简单外推到更强组合。
         pi0.5 的 5 次复跑 0 次选中 cream cheese，其中 4 次回到原始 bowl 任务。
       </div>
     </div>
@@ -473,6 +474,13 @@
           <td><span class="status fail">0/5 完整成功；1/5 只抓对对象</span></td>
           <td><span class="status neutral">未跑</span></td>
         </tr>
+        <tr>
+          <td><code>07</code></td>
+          <td>自定义目标替换</td>
+          <td>open the bottom drawer of the cabinet and put the bowl inside</td>
+          <td><span class="status fail">0/5 使用 bottom drawer</span></td>
+          <td><span class="status neutral">未跑</span></td>
+        </tr>
       </tbody>
     </table>
 
@@ -487,6 +495,8 @@
       其中 4 次直接完成了原始 <code>bowl -> top drawer</code>。更强的
       <code>cream cheese -> bottom drawer</code> 组合在 MolmoAct2 上 0/5 完成完整目标：
       1 次抓对 cream cheese 但仍使用 top drawer，4 次回到 bowl -> top drawer。
+      进一步拆开看，只换目标位置的 <code>bowl -> bottom drawer</code> 也 0/5 成功，
+      说明主要瓶颈不只是对象组合，而是当前场景里 top drawer prior 很强。
       因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
     </div>
 
@@ -519,6 +529,10 @@
         <tr>
           <th>更强组合失败例子</th>
           <td>MolmoAct2 在 <code>cream cheese -> bottom drawer</code> 上 0/5 完成完整组合。增加到 500 steps 后仍没有恢复成功。</td>
+        </tr>
+        <tr>
+          <th>目标位置失败例子</th>
+          <td>MolmoAct2 在 <code>bowl -> bottom drawer</code> 上 0/5 使用 bottom drawer，5 次都回到 <code>bowl -> top drawer</code>。</td>
         </tr>
       </tbody>
     </table>
@@ -880,6 +894,85 @@
       </div>
     </section>
 
+    <section class="case">
+      <div class="case-head">
+        <div>
+          <h3>07 自定义目标替换：bowl -> bottom drawer</h3>
+          <div class="case-meta">open the bottom drawer of the cabinet and put the bowl inside</div>
+        </div>
+      </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>弱组合测试：保持对象为 bowl，只把目标从 top drawer 改成 bottom drawer。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>bottom drawer 出现在官方任务中，但当前固定环境的原始任务是 <code>bowl -> top drawer</code>。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 0/5 使用 bottom drawer，5 次都回到 <code>bowl -> top drawer</code>。</span></div>
+      </div>
+      <div class="seed-check">
+        <h3>07 MolmoAct2 复跑稳定性</h3>
+        <p class="small">
+          本 case 使用 <code>max_steps=500</code>。自动 success 为 true 时，仍然表示原始
+          <code>bowl -> top drawer</code> BDDL 被满足；人工检查显示这些成功都不是 bottom drawer 成功。
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Seed</th>
+              <th>人工观察</th>
+              <th>结论</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>6000</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有使用 bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>6001</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有使用 bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>6002</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有使用 bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>6003</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有使用 bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>6004</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有使用 bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card">
+            <h4>Seed 6000</h4>
+            <video controls preload="metadata" src="videos/molmoact2_07_bowl_bottom_drawer_seed6000.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 6001</h4>
+            <video controls preload="metadata" src="videos/molmoact2_07_bowl_bottom_drawer_seed6001.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 6002</h4>
+            <video controls preload="metadata" src="videos/molmoact2_07_bowl_bottom_drawer_seed6002.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 6003</h4>
+            <video controls preload="metadata" src="videos/molmoact2_07_bowl_bottom_drawer_seed6003.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 6004</h4>
+            <video controls preload="metadata" src="videos/molmoact2_07_bowl_bottom_drawer_seed6004.mp4"></video>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <h2>附录：Official LIBERO Instructions（英文原文）</h2>
     <p class="small">
       这里列出 LIBERO 官方 130 条 benchmark instruction。所有 instruction 均保留英文原文，不做中文翻译，
@@ -938,6 +1031,12 @@
           <td>open the bottom drawer of the cabinet and put the cream cheese inside</td>
           <td><span class="status fail">自定义组合</span></td>
           <td>无 exact match；相关官方任务包括 cream cheese -> basket/bowl/tray、bowl -> bottom drawer、wine bottle -> bottom drawer</td>
+        </tr>
+        <tr>
+          <td><code>07</code></td>
+          <td>open the bottom drawer of the cabinet and put the bowl inside</td>
+          <td><span class="status fail">自定义目标替换</span></td>
+          <td>无 exact match；相关官方任务包括 <code>libero_90</code> 中的 black bowl -> bottom drawer</td>
         </tr>
       </tbody>
     </table>

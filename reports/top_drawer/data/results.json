@@ -108,6 +108,41 @@
           "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5004.mp4"
         }
       ]
+    },
+    {
+      "case_id": "07_target_swap_bowl_bottom_drawer",
+      "model": "MolmoAct2-LIBERO",
+      "instruction": "open the bottom drawer of the cabinet and put the bowl inside",
+      "num_trials": 5,
+      "max_steps": 500,
+      "manual_summary": "0/5 used the bottom drawer; 5/5 reverted to the original bowl -> top drawer behavior",
+      "trials": [
+        {
+          "seed": 6000,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not the bottom drawer",
+          "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6000.mp4"
+        },
+        {
+          "seed": 6001,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not the bottom drawer",
+          "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6001.mp4"
+        },
+        {
+          "seed": 6002,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not the bottom drawer",
+          "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6002.mp4"
+        },
+        {
+          "seed": 6003,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not the bottom drawer",
+          "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6003.mp4"
+        },
+        {
+          "seed": 6004,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not the bottom drawer",
+          "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6004.mp4"
+        }
+      ]
     }
   ],
   "rollouts": [
@@ -216,6 +251,22 @@
         "manual_check": "fail: 0/5 completed cream cheese -> bottom drawer; 1/5 picked cream cheese but used top drawer; 4/5 picked bowl",
         "steps": 500,
         "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5001.mp4"
+      },
+      "pi05": {
+        "manual_check": "not run",
+        "steps": null,
+        "video": null
+      }
+    },
+    {
+      "id": "07",
+      "case_id": "07_target_swap_bowl_bottom_drawer",
+      "type": "custom target swap",
+      "instruction": "open the bottom drawer of the cabinet and put the bowl inside",
+      "molmoact2": {
+        "manual_check": "fail: 0/5 used bottom drawer; all 5 reverted to bowl -> top drawer",
+        "steps": 500,
+        "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6000.mp4"
       },
       "pi05": {
         "manual_check": "not run",
