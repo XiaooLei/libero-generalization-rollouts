@@ -8,10 +8,10 @@ The current report focuses on one fixed LIBERO task:
 suite: libero_goal
 task_id: 3
 official instruction: open the top drawer and put the bowl inside
-original BDDL goal: bowl in top drawer
+original benchmark behavior: bowl -> top drawer
 ```
 
-The key finding is that `BDDL success=true` can be misleading when only the natural-language instruction is changed. In several object-swap rollouts, the policy satisfies the original LIBERO goal by placing the `bowl` in the top drawer, even though the custom instruction asks for a different object such as `plate`, `wine bottle`, or `cream cheese`.
+The key finding is based on manual video inspection. In several object-swap rollouts, the policy places the `bowl` in the top drawer even though the custom instruction asks for a different object such as `plate`, `wine bottle`, or `cream cheese`.
 
 ## Reports
 
@@ -33,6 +33,5 @@ The `reports/top_drawer/` directory is self-contained. It can be served through 
 
 ## Notes
 
-- `BDDL success` only checks the original LIBERO goal.
-- `Manual check` records whether the rollout followed the current instruction.
+- The report emphasizes manual video checks rather than automatic benchmark success.
 - Object-swap and relation-swap instructions are OOD probes, not standard LIBERO benchmark tasks.

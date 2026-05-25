@@ -9,15 +9,15 @@ This report keeps the LIBERO environment fixed and changes only the language ins
 | suite | `libero_goal` |
 | task id | `3` |
 | official instruction | `open the top drawer and put the bowl inside` |
-| original BDDL goal | `bowl in top drawer` |
+| original benchmark behavior | `bowl -> top drawer` |
 
-The automatic LIBERO success predicate still checks the original BDDL goal. It does not change when the custom instruction changes.
+The public report emphasizes manual video checks. Automatic benchmark success is not shown as a result field because it checks the original benchmark behavior and can be misleading when the language instruction is changed.
 
 ## Instruction Types
 
 | Type | Meaning |
 |---|---|
-| Official task | The original LIBERO instruction and BDDL goal. |
+| Official task | The original LIBERO instruction and benchmark behavior. |
 | Paraphrase | Same object and same goal, different wording. |
 | Object swap | Same drawer goal, but the requested object is changed. |
 | Relation swap | The requested spatial relation is changed. |
@@ -28,7 +28,6 @@ Object-swap and relation-swap cases are not standard LIBERO benchmark tasks. The
 
 | Field | Interpretation |
 |---|---|
-| `BDDL success=true` | The original `bowl in top drawer` goal was achieved. |
 | `manual check=pass` | Human inspection confirms the current instruction was followed. |
-| `BDDL=true, manual=fail` | The rollout satisfies the original benchmark goal but does not follow the current instruction. |
-| `BDDL=false` | The original benchmark goal was not achieved; manual inspection is needed to evaluate the custom instruction. |
+| `manual check=fail` | Human inspection shows the current instruction was not followed. |
+| `manual check=pending` | The video is included, but this case still needs manual labeling. |

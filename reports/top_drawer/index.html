@@ -287,12 +287,12 @@
         </div>
         <div class="metric">
           <strong>4</strong>
-          <span>BDDL-success manual failures</span>
+          <span>object-swap failures after manual check</span>
         </div>
       </div>
       <div class="note">
-        <strong>Main signal:</strong> <code>BDDL success=true</code> can mean the policy completed the original
-        benchmark goal, not that it followed the modified instruction.
+        <strong>Main signal:</strong> manual inspection shows that both policies can ignore the changed object
+        word and still perform the original <code>bowl -> top drawer</code> behavior.
       </div>
     </div>
   </header>
@@ -314,8 +314,8 @@
           <td><code>open the top drawer and put the bowl inside</code></td>
         </tr>
         <tr>
-          <th>Original BDDL goal</th>
-          <td><code>bowl in top drawer</code></td>
+          <th>Original benchmark behavior</th>
+          <td><code>bowl -> top drawer</code></td>
         </tr>
       </tbody>
     </table>
@@ -327,10 +327,8 @@
           <th>ID</th>
           <th>Type</th>
           <th>Instruction</th>
-          <th>MolmoAct2 manual</th>
-          <th>MolmoAct2 BDDL</th>
-          <th>pi0.5 manual</th>
-          <th>pi0.5 BDDL</th>
+          <th>MolmoAct2-LIBERO</th>
+          <th>pi0.5-libero</th>
         </tr>
       </thead>
       <tbody>
@@ -339,87 +337,69 @@
           <td>Official</td>
           <td>open the top drawer and put the bowl inside</td>
           <td><span class="status pass">pass</span></td>
-          <td>true</td>
           <td><span class="status pass">pass</span></td>
-          <td>true</td>
         </tr>
         <tr>
           <td><code>01</code></td>
           <td>Paraphrase</td>
           <td>put the bowl in the top drawer of the cabinet</td>
-          <td><span class="status neutral">original goal not completed</span></td>
-          <td>false</td>
+          <td><span class="status neutral">not successful</span></td>
           <td><span class="status pass">pass</span></td>
-          <td>true</td>
         </tr>
         <tr>
           <td><code>02</code></td>
           <td>Paraphrase</td>
           <td>pull open the upper drawer, then place the bowl inside</td>
           <td><span class="status pass">pass</span></td>
-          <td>true</td>
           <td><span class="status pass">pass</span></td>
-          <td>true</td>
         </tr>
         <tr>
           <td><code>03</code></td>
           <td>Object swap</td>
           <td>open the drawer and put the plate inside</td>
           <td><span class="status fail">picked bowl, not plate</span></td>
-          <td>true</td>
           <td><span class="status fail">picked bowl, not plate</span></td>
-          <td>true</td>
         </tr>
         <tr>
           <td><code>04</code></td>
           <td>Object swap</td>
           <td>open the drawer and put the wine bottle inside</td>
           <td><span class="status fail">picked bowl, not wine bottle</span></td>
-          <td>true</td>
-          <td><span class="status neutral">original goal not completed</span></td>
-          <td>false</td>
+          <td><span class="status neutral">not successful</span></td>
         </tr>
         <tr>
           <td><code>05</code></td>
           <td>Object swap</td>
           <td>open the drawer and put the cream cheese inside</td>
-          <td><span class="status neutral">original goal not completed</span></td>
-          <td>false</td>
+          <td><span class="status neutral">not successful</span></td>
           <td><span class="status fail">picked bowl, not cream cheese</span></td>
-          <td>true</td>
         </tr>
         <tr>
           <td><code>06</code></td>
           <td>Relation swap</td>
           <td>put the bowl on the plate</td>
-          <td><span class="status neutral">original goal not completed</span></td>
-          <td>false</td>
+          <td><span class="status neutral">not successful</span></td>
           <td><span class="status pending">pending</span></td>
-          <td>false</td>
         </tr>
         <tr>
           <td><code>07</code></td>
           <td>Relation swap</td>
           <td>put the bowl on the stove</td>
-          <td><span class="status neutral">original goal not completed</span></td>
-          <td>false</td>
+          <td><span class="status neutral">not successful</span></td>
           <td><span class="status pending">pending</span></td>
-          <td>false</td>
         </tr>
         <tr>
           <td><code>08</code></td>
           <td>Relation swap</td>
           <td>put the bowl on top of the cabinet</td>
-          <td><span class="status neutral">original goal not completed</span></td>
-          <td>false</td>
+          <td><span class="status neutral">not successful</span></td>
           <td><span class="status pending">pending</span></td>
-          <td>false</td>
         </tr>
       </tbody>
     </table>
 
     <h2>Rollout Videos</h2>
-    <p class="small">Each case shows the MolmoAct2 rollout and the pi0.5 rollout side by side.</p>
+    <p class="small">Each case shows the MolmoAct2-LIBERO rollout on the left and the pi0.5-libero rollout on the right.</p>
 
     <section class="case">
       <div class="case-head">
@@ -430,11 +410,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status pass">pass, BDDL true</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">pass</span></header>
           <video controls preload="metadata" src="videos/molmoact2_00_exact_train_like_bowl_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status pass">pass, BDDL true</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">pass</span></header>
           <video controls preload="metadata" src="videos/pi05_00_exact_train_like_bowl_drawer.mp4"></video>
         </article>
       </div>
@@ -449,11 +429,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status neutral">BDDL false</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
           <video controls preload="metadata" src="videos/molmoact2_01_paraphrase_bowl_drawer_cabinet.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status pass">pass, BDDL true</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">pass</span></header>
           <video controls preload="metadata" src="videos/pi05_01_paraphrase_bowl_drawer_cabinet.mp4"></video>
         </article>
       </div>
@@ -468,11 +448,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status pass">pass, BDDL true</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">pass</span></header>
           <video controls preload="metadata" src="videos/molmoact2_02_paraphrase_upper_drawer_bowl.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status pass">pass, BDDL true</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pass">pass</span></header>
           <video controls preload="metadata" src="videos/pi05_02_paraphrase_upper_drawer_bowl.mp4"></video>
         </article>
       </div>
@@ -487,11 +467,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status fail">picked bowl, BDDL true</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status fail">picked bowl, not plate</span></header>
           <video controls preload="metadata" src="videos/molmoact2_03_object_swap_plate_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status fail">picked bowl, BDDL true</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status fail">picked bowl, not plate</span></header>
           <video controls preload="metadata" src="videos/pi05_03_object_swap_plate_drawer.mp4"></video>
         </article>
       </div>
@@ -506,11 +486,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status fail">picked bowl, BDDL true</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status fail">picked bowl, not wine bottle</span></header>
           <video controls preload="metadata" src="videos/molmoact2_04_object_swap_wine_bottle_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status neutral">BDDL false</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status neutral">not successful</span></header>
           <video controls preload="metadata" src="videos/pi05_04_object_swap_wine_bottle_drawer.mp4"></video>
         </article>
       </div>
@@ -525,11 +505,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status neutral">BDDL false</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
           <video controls preload="metadata" src="videos/molmoact2_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status fail">picked bowl, BDDL true</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status fail">picked bowl, not cream cheese</span></header>
           <video controls preload="metadata" src="videos/pi05_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
       </div>
@@ -544,11 +524,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status neutral">BDDL false</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
           <video controls preload="metadata" src="videos/molmoact2_06_relation_swap_bowl_on_plate.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status pending">manual pending</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pending">manual pending</span></header>
           <video controls preload="metadata" src="videos/pi05_06_relation_swap_bowl_on_plate.mp4"></video>
         </article>
       </div>
@@ -563,11 +543,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status neutral">BDDL false</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
           <video controls preload="metadata" src="videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status pending">manual pending</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pending">manual pending</span></header>
           <video controls preload="metadata" src="videos/pi05_07_relation_swap_bowl_on_stove.mp4"></video>
         </article>
       </div>
@@ -582,11 +562,11 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2</h4><span class="status neutral">BDDL false</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
           <video controls preload="metadata" src="videos/molmoact2_08_relation_swap_bowl_on_cabinet.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5</h4><span class="status pending">manual pending</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status pending">manual pending</span></header>
           <video controls preload="metadata" src="videos/pi05_08_relation_swap_bowl_on_cabinet.mp4"></video>
         </article>
       </div>

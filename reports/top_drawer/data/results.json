@@ -3,7 +3,7 @@
   "suite": "libero_goal",
   "task_id": 3,
   "official_instruction": "open the top drawer and put the bowl inside",
-  "original_bddl_goal": "bowl in top drawer",
+  "original_benchmark_behavior": "bowl -> top drawer",
   "models": ["MolmoAct2-LIBERO", "pi0.5-libero"],
   "rollouts": [
     {
@@ -12,13 +12,11 @@
       "type": "official",
       "instruction": "open the top drawer and put the bowl inside",
       "molmoact2": {
-        "bddl_success": true,
         "manual_check": "pass",
         "steps": 172,
         "video": "videos/molmoact2_00_exact_train_like_bowl_drawer.mp4"
       },
       "pi05": {
-        "bddl_success": true,
         "manual_check": "pass",
         "steps": 185,
         "video": "videos/pi05_00_exact_train_like_bowl_drawer.mp4"
@@ -30,13 +28,11 @@
       "type": "paraphrase",
       "instruction": "put the bowl in the top drawer of the cabinet",
       "molmoact2": {
-        "bddl_success": false,
         "manual_check": "original goal not completed",
         "steps": 300,
         "video": "videos/molmoact2_01_paraphrase_bowl_drawer_cabinet.mp4"
       },
       "pi05": {
-        "bddl_success": true,
         "manual_check": "pass",
         "steps": 189,
         "video": "videos/pi05_01_paraphrase_bowl_drawer_cabinet.mp4"
@@ -48,13 +44,11 @@
       "type": "paraphrase",
       "instruction": "pull open the upper drawer, then place the bowl inside",
       "molmoact2": {
-        "bddl_success": true,
         "manual_check": "pass",
         "steps": 179,
         "video": "videos/molmoact2_02_paraphrase_upper_drawer_bowl.mp4"
       },
       "pi05": {
-        "bddl_success": true,
         "manual_check": "pass",
         "steps": 190,
         "video": "videos/pi05_02_paraphrase_upper_drawer_bowl.mp4"
@@ -66,13 +60,11 @@
       "type": "object swap",
       "instruction": "open the drawer and put the plate inside",
       "molmoact2": {
-        "bddl_success": true,
         "manual_check": "fail: picked bowl, not plate",
         "steps": 180,
         "video": "videos/molmoact2_03_object_swap_plate_drawer.mp4"
       },
       "pi05": {
-        "bddl_success": true,
         "manual_check": "fail: picked bowl, not plate",
         "steps": 193,
         "video": "videos/pi05_03_object_swap_plate_drawer.mp4"
@@ -84,13 +76,11 @@
       "type": "object swap",
       "instruction": "open the drawer and put the wine bottle inside",
       "molmoact2": {
-        "bddl_success": true,
         "manual_check": "fail: picked bowl, not wine bottle",
         "steps": 232,
         "video": "videos/molmoact2_04_object_swap_wine_bottle_drawer.mp4"
       },
       "pi05": {
-        "bddl_success": false,
         "manual_check": "original goal not completed",
         "steps": 300,
         "video": "videos/pi05_04_object_swap_wine_bottle_drawer.mp4"
@@ -102,13 +92,11 @@
       "type": "object swap",
       "instruction": "open the drawer and put the cream cheese inside",
       "molmoact2": {
-        "bddl_success": false,
         "manual_check": "original goal not completed",
         "steps": 300,
         "video": "videos/molmoact2_05_object_swap_cream_cheese_drawer.mp4"
       },
       "pi05": {
-        "bddl_success": true,
         "manual_check": "fail: picked bowl, not cream cheese",
         "steps": 192,
         "video": "videos/pi05_05_object_swap_cream_cheese_drawer.mp4"
@@ -120,13 +108,11 @@
       "type": "relation swap",
       "instruction": "put the bowl on the plate",
       "molmoact2": {
-        "bddl_success": false,
         "manual_check": "original goal not completed",
         "steps": 300,
         "video": "videos/molmoact2_06_relation_swap_bowl_on_plate.mp4"
       },
       "pi05": {
-        "bddl_success": false,
         "manual_check": "pending",
         "steps": 300,
         "video": "videos/pi05_06_relation_swap_bowl_on_plate.mp4"
@@ -138,13 +124,11 @@
       "type": "relation swap",
       "instruction": "put the bowl on the stove",
       "molmoact2": {
-        "bddl_success": false,
         "manual_check": "original goal not completed",
         "steps": 300,
         "video": "videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"
       },
       "pi05": {
-        "bddl_success": false,
         "manual_check": "pending",
         "steps": 300,
         "video": "videos/pi05_07_relation_swap_bowl_on_stove.mp4"
@@ -156,13 +140,11 @@
       "type": "relation swap",
       "instruction": "put the bowl on top of the cabinet",
       "molmoact2": {
-        "bddl_success": false,
         "manual_check": "original goal not completed",
         "steps": 300,
         "video": "videos/molmoact2_08_relation_swap_bowl_on_cabinet.mp4"
       },
       "pi05": {
-        "bddl_success": false,
         "manual_check": "pending",
         "steps": 300,
         "video": "videos/pi05_08_relation_swap_bowl_on_cabinet.mp4"
