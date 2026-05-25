@@ -437,6 +437,107 @@
       </tbody>
     </table>
 
+    <h2>Case Design and Observations</h2>
+    <p class="small">
+      The cases are not all the same kind of OOD. Some are exact official tasks, some are paraphrases,
+      some are custom object-target compositions, and some are official LIBERO instructions from other task IDs
+      run inside the fixed <code>libero_goal/task_id=3</code> environment.
+    </p>
+
+    <h3>Overall Observations</h3>
+    <table>
+      <tbody>
+        <tr>
+          <th>Official current task</th>
+          <td>Both models can solve the original <code>bowl -> top drawer</code> task.</td>
+        </tr>
+        <tr>
+          <th>Paraphrase robustness</th>
+          <td>pi0.5 handles both paraphrases in this run. MolmoAct2 handles the "upper drawer" paraphrase but not the "top drawer of the cabinet" wording.</td>
+        </tr>
+        <tr>
+          <th>Object grounding</th>
+          <td>Both models can be absorbed into the original bowl behavior on some object swaps. The clearest failures are plate drawer for both models, wine bottle drawer for MolmoAct2, and cream cheese drawer for pi0.5.</td>
+        </tr>
+        <tr>
+          <th>Positive custom composition</th>
+          <td>MolmoAct2 succeeds on <code>cream cheese -> drawer</code>, which is not an official 130-task instruction even though cream cheese is an official LIBERO object.</td>
+        </tr>
+        <tr>
+          <th>Cross-task relation transfer</th>
+          <td>Relation probes are stronger than a pure OOD label: <code>bowl -> plate</code>, <code>bowl -> stove</code>, and <code>bowl -> cabinet</code> are official LIBERO instructions from other task IDs. MolmoAct2 succeeds on all three; pi0.5 succeeds on <code>bowl -> plate</code> and <code>bowl -> cabinet</code>, while <code>bowl -> stove</code> is still pending manual labeling.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Per-Case Meaning</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>What This Tests</th>
+          <th>Official Benchmark Relationship</th>
+          <th>Observation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>00</code></td>
+          <td>Baseline: verifies that the policies, environment, and rollout setup can solve the original task.</td>
+          <td>Exact current task: <code>libero_goal/3</code>.</td>
+          <td>Both MolmoAct2 and pi0.5 complete <code>bowl -> top drawer</code>.</td>
+        </tr>
+        <tr>
+          <td><code>01</code></td>
+          <td>Language paraphrase robustness without changing object or target relation.</td>
+          <td>No exact official instruction match; semantically a paraphrase of <code>libero_goal/3</code>.</td>
+          <td>pi0.5 succeeds. MolmoAct2 does not complete this wording in this run.</td>
+        </tr>
+        <tr>
+          <td><code>02</code></td>
+          <td>Another paraphrase of the same task, using "upper drawer" and explicit temporal ordering.</td>
+          <td>No exact official instruction match; semantically a paraphrase of <code>libero_goal/3</code>.</td>
+          <td>Both models succeed, so this wording does not break the original task behavior.</td>
+        </tr>
+        <tr>
+          <td><code>03</code></td>
+          <td>Object grounding under a custom drawer instruction: replace <code>bowl</code> with <code>plate</code>.</td>
+          <td>No exact official instruction match in the 130 tasks.</td>
+          <td>Both models fail the custom instruction by picking the bowl instead of the plate.</td>
+        </tr>
+        <tr>
+          <td><code>04</code></td>
+          <td>Object grounding under a custom drawer instruction: replace <code>bowl</code> with <code>wine bottle</code>.</td>
+          <td>No exact match for this instruction. Related official task: <code>libero_90/26</code> puts the wine bottle in the bottom drawer.</td>
+          <td>MolmoAct2 picks the bowl instead of the wine bottle. pi0.5 does not complete the requested behavior in this run.</td>
+        </tr>
+        <tr>
+          <td><code>05</code></td>
+          <td>Custom object-target composition with an official LIBERO object: <code>cream cheese -> drawer</code>.</td>
+          <td>No exact official instruction match. Cream cheese appears in official tasks, but not as a drawer-placement target.</td>
+          <td>MolmoAct2 succeeds by picking the cream cheese and placing it in the drawer. pi0.5 picks the bowl instead.</td>
+        </tr>
+        <tr>
+          <td><code>06</code></td>
+          <td>Cross-task relation transfer: switch from <code>in(top drawer)</code> to <code>on(plate)</code> while keeping the object as bowl.</td>
+          <td>Exact official instruction exists as <code>libero_goal/8</code>, but this rollout is executed in the fixed <code>libero_goal/3</code> environment.</td>
+          <td>Both models put the bowl on the plate.</td>
+        </tr>
+        <tr>
+          <td><code>07</code></td>
+          <td>Cross-task relation transfer: switch from drawer placement to placing the bowl on the stove.</td>
+          <td>Exact official instruction exists as <code>libero_goal/1</code>, but this rollout is executed in the fixed <code>libero_goal/3</code> environment.</td>
+          <td>MolmoAct2 puts the bowl on the stove. pi0.5 is still pending manual labeling.</td>
+        </tr>
+        <tr>
+          <td><code>08</code></td>
+          <td>Cross-task relation transfer: switch from putting the bowl inside the drawer to putting it on top of the cabinet.</td>
+          <td>Exact official instruction exists as <code>libero_goal/4</code>, but this rollout is executed in the fixed <code>libero_goal/3</code> environment.</td>
+          <td>Both models put the bowl on top of the cabinet.</td>
+        </tr>
+      </tbody>
+    </table>
+
     <h2>Rollout Videos</h2>
     <p class="small">Each case shows the MolmoAct2-LIBERO rollout on the left and the pi0.5-libero rollout on the right.</p>
 

@@ -32,6 +32,7 @@ docs/
 
 The `reports/top_drawer/` directory is self-contained. It can be served through GitHub Pages or opened from a local static file server.
 The report appendix includes the official 130 LIBERO benchmark instructions for direct comparison against the rollout instructions.
+The main report also includes a per-case explanation of what each rollout is intended to test and what was observed in the videos.
 
 ## Notes
 
