@@ -11,7 +11,7 @@ official instruction: open the top drawer and put the bowl inside
 original benchmark behavior: bowl -> top drawer
 ```
 
-The key finding is based on manual video inspection. In several custom object-swap rollouts, the policy places the `bowl` in the top drawer even though the custom instruction asks for a different object such as `plate`, `wine bottle`, or `cream cheese`.
+The key finding is based on manual video inspection. The modified-instruction results are mixed: some rollouts place the `bowl` in the top drawer even when the instruction asks for another behavior, while MolmoAct2 succeeds on `cream cheese -> drawer`, `bowl -> plate`, and `bowl -> stove`.
 
 ## Reports
 

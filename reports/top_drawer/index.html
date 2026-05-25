@@ -286,13 +286,14 @@
           <span>rollout videos</span>
         </div>
         <div class="metric">
-          <strong>4</strong>
-          <span>object-swap failures after manual check</span>
+          <strong>3</strong>
+          <span>positive non-current-task cases</span>
         </div>
       </div>
       <div class="note">
-        <strong>Main signal:</strong> manual inspection shows that both policies can ignore the changed object
-        word and still perform the original <code>bowl -> top drawer</code> behavior.
+        <strong>Main signal:</strong> manual inspection shows mixed behavior: some modified instructions are absorbed
+        into the original <code>bowl -> top drawer</code> behavior, while MolmoAct2 succeeds on
+        <code>cream cheese -> drawer</code>, <code>bowl -> plate</code>, and <code>bowl -> stove</code>.
       </div>
     </div>
   </header>
@@ -325,6 +326,8 @@
       "Official" means the exact task used in this fixed environment. Some objects, such as cream cheese, do appear
       in other official LIBERO tasks, but the full instruction <code>open the drawer and put the cream cheese inside</code>
       is a custom instruction in this report.
+      Relation-swap instructions may also be official LIBERO instructions from other task IDs, but they are not the
+      official instruction for this fixed <code>libero_goal/task_id=3</code> environment.
     </p>
     <table>
       <thead>
@@ -376,21 +379,21 @@
           <td><code>05</code></td>
           <td>Custom object swap</td>
           <td>open the drawer and put the cream cheese inside</td>
-          <td><span class="status neutral">not successful</span></td>
+          <td><span class="status pass">picked cream cheese</span></td>
           <td><span class="status fail">picked bowl, not cream cheese</span></td>
         </tr>
         <tr>
           <td><code>06</code></td>
           <td>Relation swap</td>
           <td>put the bowl on the plate</td>
-          <td><span class="status neutral">not successful</span></td>
+          <td><span class="status pass">put bowl on plate</span></td>
           <td><span class="status pending">pending</span></td>
         </tr>
         <tr>
           <td><code>07</code></td>
           <td>Relation swap</td>
           <td>put the bowl on the stove</td>
-          <td><span class="status neutral">not successful</span></td>
+          <td><span class="status pass">put bowl on stove</span></td>
           <td><span class="status pending">pending</span></td>
         </tr>
         <tr>
@@ -510,7 +513,7 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">picked cream cheese</span></header>
           <video controls preload="metadata" src="videos/molmoact2_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
         <article class="video-panel">
@@ -529,7 +532,7 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">put bowl on plate</span></header>
           <video controls preload="metadata" src="videos/molmoact2_06_relation_swap_bowl_on_plate.mp4"></video>
         </article>
         <article class="video-panel">
@@ -548,7 +551,7 @@
       </div>
       <div class="case-body">
         <article class="video-panel">
-          <header><h4>MolmoAct2-LIBERO</h4><span class="status neutral">not successful</span></header>
+          <header><h4>MolmoAct2-LIBERO</h4><span class="status pass">put bowl on stove</span></header>
           <video controls preload="metadata" src="videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"></video>
         </article>
         <article class="video-panel">

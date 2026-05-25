@@ -24,6 +24,10 @@ The public report emphasizes manual video checks. Automatic benchmark success is
 
 Custom object-swap and relation-swap cases are not standard LIBERO benchmark tasks for this fixed environment. They are used here as probes for instruction following and compositional generalization.
 
+The cream-cheese drawer case should be read as a positive OOD-composition example when the video shows the policy picking the cream cheese and placing it in the drawer. Cream cheese is an official LIBERO object, but this drawer target combination is not one of the 130 official benchmark instructions.
+
+The `put the bowl on the plate` and `put the bowl on the stove` instructions are official LIBERO instructions in other tasks, but in this report they are run inside the fixed `libero_goal/task_id=3` environment. They should be read as cross-task relation probes rather than the current task's official benchmark instruction.
+
 ## How to Read Results
 
 | Field | Interpretation |

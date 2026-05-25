@@ -92,7 +92,7 @@
       "type": "custom object swap",
       "instruction": "open the drawer and put the cream cheese inside",
       "molmoact2": {
-        "manual_check": "original goal not completed",
+        "manual_check": "pass: picked cream cheese and placed it in the drawer",
         "steps": 300,
         "video": "videos/molmoact2_05_object_swap_cream_cheese_drawer.mp4"
       },
@@ -108,7 +108,7 @@
       "type": "relation swap",
       "instruction": "put the bowl on the plate",
       "molmoact2": {
-        "manual_check": "original goal not completed",
+        "manual_check": "pass: put bowl on plate",
         "steps": 300,
         "video": "videos/molmoact2_06_relation_swap_bowl_on_plate.mp4"
       },
@@ -124,7 +124,7 @@
       "type": "relation swap",
       "instruction": "put the bowl on the stove",
       "molmoact2": {
-        "manual_check": "original goal not completed",
+        "manual_check": "pass: put bowl on stove",
         "steps": 300,
         "video": "videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"
       },
