@@ -245,6 +245,35 @@
       font-size: 13px;
     }
 
+    .appendix-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+
+    .appendix-controls input,
+    .appendix-controls select {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      padding: 6px 10px;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .appendix-controls input {
+      width: min(420px, 100%);
+    }
+
+    .appendix-count {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     footer {
       margin: 44px 0 28px;
       color: var(--muted);
@@ -581,9 +610,153 @@
       </div>
     </section>
 
+    <h2>Appendix: Official LIBERO Instructions</h2>
+    <p class="small">
+      This appendix lists the official 130 LIBERO benchmark instructions. Use it to check whether a rollout
+      instruction is an exact benchmark instruction, a paraphrase of the current task, or a custom composition.
+    </p>
+
+    <h3>Current Rollout Cross-Check</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Instruction</th>
+          <th>Current fixed task?</th>
+          <th>Exact official instruction in 130?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>00</code></td>
+          <td>open the top drawer and put the bowl inside</td>
+          <td><span class="status pass">official current task</span></td>
+          <td><code>libero_goal/3</code></td>
+        </tr>
+        <tr>
+          <td><code>01</code></td>
+          <td>put the bowl in the top drawer of the cabinet</td>
+          <td><span class="status neutral">paraphrase of current task</span></td>
+          <td>No exact match</td>
+        </tr>
+        <tr>
+          <td><code>02</code></td>
+          <td>pull open the upper drawer, then place the bowl inside</td>
+          <td><span class="status neutral">paraphrase of current task</span></td>
+          <td>No exact match</td>
+        </tr>
+        <tr>
+          <td><code>03</code></td>
+          <td>open the drawer and put the plate inside</td>
+          <td><span class="status fail">custom composition</span></td>
+          <td>No exact match</td>
+        </tr>
+        <tr>
+          <td><code>04</code></td>
+          <td>open the drawer and put the wine bottle inside</td>
+          <td><span class="status fail">custom composition</span></td>
+          <td>No exact match; related: <code>libero_90/26</code> puts wine bottle in bottom drawer</td>
+        </tr>
+        <tr>
+          <td><code>05</code></td>
+          <td>open the drawer and put the cream cheese inside</td>
+          <td><span class="status fail">custom composition</span></td>
+          <td>No exact match; cream cheese appears in official tasks, but not drawer tasks</td>
+        </tr>
+        <tr>
+          <td><code>06</code></td>
+          <td>put the bowl on the plate</td>
+          <td><span class="status neutral">cross-task relation probe</span></td>
+          <td><code>libero_goal/8</code></td>
+        </tr>
+        <tr>
+          <td><code>07</code></td>
+          <td>put the bowl on the stove</td>
+          <td><span class="status neutral">cross-task relation probe</span></td>
+          <td><code>libero_goal/1</code></td>
+        </tr>
+        <tr>
+          <td><code>08</code></td>
+          <td>put the bowl on top of the cabinet</td>
+          <td><span class="status neutral">cross-task relation probe</span></td>
+          <td><code>libero_goal/4</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>All Official Benchmark Instructions</h3>
+    <div class="appendix-controls">
+      <select id="official-suite-filter" aria-label="Filter official instructions by suite">
+        <option value="">All suites</option>
+      </select>
+      <input id="official-search" type="search" placeholder="Search official instructions, e.g. cream cheese, drawer, bowl on plate" aria-label="Search official instructions">
+      <span id="official-count" class="appendix-count">Loading...</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Suite</th>
+          <th>Task ID</th>
+          <th>Official Instruction</th>
+        </tr>
+      </thead>
+      <tbody id="official-instructions-body">
+        <tr>
+          <td colspan="3">Loading official LIBERO instructions...</td>
+        </tr>
+      </tbody>
+    </table>
+
     <footer>
-      Data file: <a href="data/results.json">data/results.json</a>. Methodology: <a href="../../docs/methodology.md">docs/methodology.md</a>.
+      Data files: <a href="data/results.json">results.json</a>,
+      <a href="data/libero_official_instructions.json">libero_official_instructions.json</a>.
+      Methodology: <a href="../../docs/methodology.md">docs/methodology.md</a>.
     </footer>
   </main>
+  <script>
+    const officialBody = document.getElementById("official-instructions-body");
+    const officialSearch = document.getElementById("official-search");
+    const officialSuiteFilter = document.getElementById("official-suite-filter");
+    const officialCount = document.getElementById("official-count");
+    let officialInstructions = [];
+
+    function renderOfficialInstructions() {
+      const query = officialSearch.value.trim().toLowerCase();
+      const suite = officialSuiteFilter.value;
+      const rows = officialInstructions.filter((task) => {
+        const suiteMatches = !suite || task.suite === suite;
+        const text = `${task.suite} ${task.task_id} ${task.language}`.toLowerCase();
+        return suiteMatches && (!query || text.includes(query));
+      });
+
+      officialCount.textContent = `${rows.length} / ${officialInstructions.length} tasks`;
+      officialBody.innerHTML = rows.map((task) => `
+        <tr>
+          <td><code>${task.suite}</code></td>
+          <td>${task.task_id}</td>
+          <td>${task.language}</td>
+        </tr>
+      `).join("") || `<tr><td colspan="3">No matching official instruction.</td></tr>`;
+    }
+
+    fetch("data/libero_official_instructions.json")
+      .then((response) => response.json())
+      .then((tasks) => {
+        officialInstructions = tasks;
+        const suites = [...new Set(tasks.map((task) => task.suite))];
+        officialSuiteFilter.insertAdjacentHTML(
+          "beforeend",
+          suites.map((suite) => `<option value="${suite}">${suite}</option>`).join("")
+        );
+        renderOfficialInstructions();
+      })
+      .catch(() => {
+        officialCount.textContent = "Failed to load official instructions";
+        officialBody.innerHTML = `<tr><td colspan="3">Could not load data/libero_official_instructions.json.</td></tr>`;
+      });
+
+    officialSearch.addEventListener("input", renderOfficialInstructions);
+    officialSuiteFilter.addEventListener("change", renderOfficialInstructions);
+  </script>
 </body>
 </html>

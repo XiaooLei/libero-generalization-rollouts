@@ -25,11 +25,13 @@ reports/
     index.html
     videos/
     data/results.json
+    data/libero_official_instructions.json
 docs/
   methodology.md
 ```
 
 The `reports/top_drawer/` directory is self-contained. It can be served through GitHub Pages or opened from a local static file server.
+The report appendix includes the official 130 LIBERO benchmark instructions for direct comparison against the rollout instructions.
 
 ## Notes
 
