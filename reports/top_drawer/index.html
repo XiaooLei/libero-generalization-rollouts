@@ -365,7 +365,7 @@
           <span>对比模型</span>
         </div>
         <div class="metric">
-          <strong>22</strong>
+          <strong>27</strong>
           <span>rollout 视频</span>
         </div>
         <div class="metric">
@@ -377,7 +377,9 @@
         <strong>主要观察：</strong>人工检查显示结果是混合的：有些修改后的指令会被吸收到原始
         <code>bowl -> top drawer</code> 行为里；在当前保留的自定义对象组合中，
         MolmoAct2 对 <code>cream cheese -> drawer</code> 的 5 次复跑都选中了 cream cheese，
-        但只有 3 次干净放入 drawer；pi0.5 的 5 次复跑 0 次选中 cream cheese，其中 4 次回到原始 bowl 任务。
+        但只有 3 次干净放入 drawer；进一步要求 <code>cream cheese -> bottom drawer</code> 时，
+        MolmoAct2 0/5 完成完整组合，说明当前正例不能简单外推到更强组合。
+        pi0.5 的 5 次复跑 0 次选中 cream cheese，其中 4 次回到原始 bowl 任务。
       </div>
     </div>
   </header>
@@ -464,6 +466,13 @@
           <td><span class="status pass">5/5 抓对；3/5 clean 成功</span></td>
           <td><span class="status fail">0/5 抓对；4/5 回到 bowl</span></td>
         </tr>
+        <tr>
+          <td><code>06</code></td>
+          <td>自定义对象+目标替换</td>
+          <td>open the bottom drawer of the cabinet and put the cream cheese inside</td>
+          <td><span class="status fail">0/5 完整成功；1/5 只抓对对象</span></td>
+          <td><span class="status neutral">未跑</span></td>
+        </tr>
       </tbody>
     </table>
 
@@ -475,7 +484,9 @@
       模型容易回到 <code>bowl -> top drawer</code>。<code>cream cheese -> drawer</code>
       是当前唯一较正向的例子：MolmoAct2 复跑 5 次都抓了 cream cheese，但只有 3 次干净放入 drawer，
       说明对象 grounding 比前两个替换更好，最终操作稳定性仍不够；pi0.5 复跑 5 次没有一次选中 cream cheese，
-      其中 4 次直接完成了原始 <code>bowl -> top drawer</code>。
+      其中 4 次直接完成了原始 <code>bowl -> top drawer</code>。更强的
+      <code>cream cheese -> bottom drawer</code> 组合在 MolmoAct2 上 0/5 完成完整目标：
+      1 次抓对 cream cheese 但仍使用 top drawer，4 次回到 bowl -> top drawer。
       因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
     </div>
 
@@ -505,11 +516,15 @@
           <th>自定义组合成功例子</th>
           <td>MolmoAct2 在 <code>cream cheese -> drawer</code> 上 5 次都选对 cream cheese，其中 3 次干净放入 drawer；pi0.5 在同一测试上 0/5 选对 cream cheese。cream cheese 是 LIBERO 官方物体，但这个 drawer 组合不是 130 条官方 instruction 之一。</td>
         </tr>
+        <tr>
+          <th>更强组合失败例子</th>
+          <td>MolmoAct2 在 <code>cream cheese -> bottom drawer</code> 上 0/5 完成完整组合。增加到 500 steps 后仍没有恢复成功。</td>
+        </tr>
       </tbody>
     </table>
 
     <h2>Rollout 视频与逐 case 解释</h2>
-    <p class="small">每个卡片左侧是 MolmoAct2-LIBERO，右侧是 pi0.5-libero。卡片顶部直接写明这个 case 要测什么、和官方 benchmark 的关系、以及人工观察结论。</p>
+    <p class="small">多数卡片左侧是 MolmoAct2-LIBERO，右侧是 pi0.5-libero；新增探索性 case 会先只展示已跑模型。卡片顶部直接写明这个 case 要测什么、和官方 benchmark 的关系、以及人工观察结论。</p>
 
     <section class="case">
       <div class="case-head">
@@ -785,6 +800,86 @@
       </div>
     </section>
 
+    <section class="case">
+      <div class="case-head">
+        <div>
+          <h3>06 自定义对象+目标替换：cream cheese -> bottom drawer</h3>
+          <div class="case-meta">open the bottom drawer of the cabinet and put the cream cheese inside</div>
+        </div>
+      </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>比 case 05 更强的组合泛化测试：同时换对象和 drawer 位置。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>cream cheese、bottom drawer 都出现在官方任务中，但官方 130 条里没有这个 exact 组合。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 0/5 完成完整目标；500 steps 没有带来恢复成功。</span></div>
+      </div>
+      <div class="seed-check">
+        <h3>06 MolmoAct2 复跑稳定性</h3>
+        <p class="small">
+          本 case 使用 <code>max_steps=500</code>。自动 success 仍按原始 BDDL
+          <code>bowl -> top drawer</code> 判定，因此 4 次 automatic success 实际对应回到原始任务，
+          不是完成当前自定义指令。
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Seed</th>
+              <th>人工观察</th>
+              <th>结论</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>5000</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有执行 cream cheese -> bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>5001</code></td>
+              <td>抓了 cream cheese，但放进 top drawer；对象正确，目标 drawer 错误。</td>
+              <td><span class="status pending">部分成功</span></td>
+            </tr>
+            <tr>
+              <td><code>5002</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有执行 cream cheese -> bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>5003</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有执行 cream cheese -> bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>5004</code></td>
+              <td>抓了 bowl，并放进 top drawer；没有执行 cream cheese -> bottom drawer。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card">
+            <h4>Seed 5000</h4>
+            <video controls preload="metadata" src="videos/molmoact2_06_cream_cheese_bottom_drawer_seed5000.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 5001</h4>
+            <video controls preload="metadata" src="videos/molmoact2_06_cream_cheese_bottom_drawer_seed5001.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 5002</h4>
+            <video controls preload="metadata" src="videos/molmoact2_06_cream_cheese_bottom_drawer_seed5002.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 5003</h4>
+            <video controls preload="metadata" src="videos/molmoact2_06_cream_cheese_bottom_drawer_seed5003.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 5004</h4>
+            <video controls preload="metadata" src="videos/molmoact2_06_cream_cheese_bottom_drawer_seed5004.mp4"></video>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <h2>附录：Official LIBERO Instructions（英文原文）</h2>
     <p class="small">
       这里列出 LIBERO 官方 130 条 benchmark instruction。所有 instruction 均保留英文原文，不做中文翻译，
@@ -837,6 +932,12 @@
           <td>open the drawer and put the cream cheese inside</td>
           <td><span class="status fail">自定义组合</span></td>
           <td>无 exact match；cream cheese 出现在官方任务中，但没有 drawer 放置任务</td>
+        </tr>
+        <tr>
+          <td><code>06</code></td>
+          <td>open the bottom drawer of the cabinet and put the cream cheese inside</td>
+          <td><span class="status fail">自定义组合</span></td>
+          <td>无 exact match；相关官方任务包括 cream cheese -> basket/bowl/tray、bowl -> bottom drawer、wine bottle -> bottom drawer</td>
         </tr>
       </tbody>
     </table>

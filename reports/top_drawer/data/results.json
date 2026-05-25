@@ -73,6 +73,41 @@
           "video": "videos/pi05_05_cream_cheese_seed3004.mp4"
         }
       ]
+    },
+    {
+      "case_id": "06_object_and_target_swap_cream_cheese_bottom_drawer",
+      "model": "MolmoAct2-LIBERO",
+      "instruction": "open the bottom drawer of the cabinet and put the cream cheese inside",
+      "num_trials": 5,
+      "max_steps": 500,
+      "manual_summary": "0/5 completed the requested cream cheese -> bottom drawer composition; 1/5 selected cream cheese but used the top drawer; 4/5 reverted to bowl -> top drawer",
+      "trials": [
+        {
+          "seed": 5000,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese in the bottom drawer",
+          "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5000.mp4"
+        },
+        {
+          "seed": 5001,
+          "manual_check": "partial: picked cream cheese but placed it in the top drawer, not the bottom drawer",
+          "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5001.mp4"
+        },
+        {
+          "seed": 5002,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese in the bottom drawer",
+          "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5002.mp4"
+        },
+        {
+          "seed": 5003,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese in the bottom drawer",
+          "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5003.mp4"
+        },
+        {
+          "seed": 5004,
+          "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese in the bottom drawer",
+          "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5004.mp4"
+        }
+      ]
     }
   ],
   "rollouts": [
@@ -170,6 +205,22 @@
         "manual_check": "fail: picked bowl, not cream cheese",
         "steps": 192,
         "video": "videos/pi05_05_object_swap_cream_cheese_drawer.mp4"
+      }
+    },
+    {
+      "id": "06",
+      "case_id": "06_object_and_target_swap_cream_cheese_bottom_drawer",
+      "type": "custom object and target swap",
+      "instruction": "open the bottom drawer of the cabinet and put the cream cheese inside",
+      "molmoact2": {
+        "manual_check": "fail: 0/5 completed cream cheese -> bottom drawer; 1/5 picked cream cheese but used top drawer; 4/5 picked bowl",
+        "steps": 500,
+        "video": "videos/molmoact2_06_cream_cheese_bottom_drawer_seed5001.mp4"
+      },
+      "pi05": {
+        "manual_check": "not run",
+        "steps": null,
+        "video": null
       }
     }
   ]
