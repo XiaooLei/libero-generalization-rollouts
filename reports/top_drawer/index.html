@@ -365,7 +365,7 @@
           <span>对比模型</span>
         </div>
         <div class="metric">
-          <strong>17</strong>
+          <strong>22</strong>
           <span>rollout 视频</span>
         </div>
         <div class="metric">
@@ -377,7 +377,7 @@
         <strong>主要观察：</strong>人工检查显示结果是混合的：有些修改后的指令会被吸收到原始
         <code>bowl -> top drawer</code> 行为里；在当前保留的自定义对象组合中，
         MolmoAct2 对 <code>cream cheese -> drawer</code> 的 5 次复跑都选中了 cream cheese，
-        但只有 3 次干净放入 drawer，pi0.5 的单次运行仍抓了 bowl。
+        但只有 3 次干净放入 drawer；pi0.5 的 5 次复跑 0 次选中 cream cheese，其中 4 次回到原始 bowl 任务。
       </div>
     </div>
   </header>
@@ -462,7 +462,7 @@
           <td>自定义对象替换</td>
           <td>open the drawer and put the cream cheese inside</td>
           <td><span class="status pass">5/5 抓对；3/5 clean 成功</span></td>
-          <td><span class="status fail">抓了 bowl，不是 cream cheese</span></td>
+          <td><span class="status fail">0/5 抓对；4/5 回到 bowl</span></td>
         </tr>
       </tbody>
     </table>
@@ -474,7 +474,8 @@
       <code>plate -> drawer</code> 和 <code>wine bottle -> drawer</code> 暴露出明显的原始任务先验：
       模型容易回到 <code>bowl -> top drawer</code>。<code>cream cheese -> drawer</code>
       是当前唯一较正向的例子：MolmoAct2 复跑 5 次都抓了 cream cheese，但只有 3 次干净放入 drawer，
-      说明对象 grounding 比前两个替换更好，最终操作稳定性仍不够；pi0.5 单次运行仍抓了 bowl。
+      说明对象 grounding 比前两个替换更好，最终操作稳定性仍不够；pi0.5 复跑 5 次没有一次选中 cream cheese，
+      其中 4 次直接完成了原始 <code>bowl -> top drawer</code>。
       因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
     </div>
 
@@ -502,7 +503,7 @@
         </tr>
         <tr>
           <th>自定义组合成功例子</th>
-          <td>MolmoAct2 在 <code>cream cheese -> drawer</code> 上 5 次都选对 cream cheese，其中 3 次干净放入 drawer。cream cheese 是 LIBERO 官方物体，但这个 drawer 组合不是 130 条官方 instruction 之一。</td>
+          <td>MolmoAct2 在 <code>cream cheese -> drawer</code> 上 5 次都选对 cream cheese，其中 3 次干净放入 drawer；pi0.5 在同一测试上 0/5 选对 cream cheese。cream cheese 是 LIBERO 官方物体，但这个 drawer 组合不是 130 条官方 instruction 之一。</td>
         </tr>
       </tbody>
     </table>
@@ -640,7 +641,7 @@
       <div class="case-details">
         <div class="case-detail"><strong>测试意义</strong><span>测试官方物体的自定义组合：<code>cream cheese -> drawer</code>。</span></div>
         <div class="case-detail"><strong>官方关系</strong><span>cream cheese 是官方物体，但官方 130 条里没有 cream cheese 放进 drawer 的 exact task。</span></div>
-        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 5 次都抓了 cream cheese，3 次干净放入 drawer；pi0.5 单次运行抓了 bowl。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 5 次都抓了 cream cheese，3 次干净放入 drawer；pi0.5 5 次都没有抓 cream cheese，4 次回到 bowl。</span></div>
       </div>
       <div class="case-body">
         <article class="video-panel">
@@ -648,7 +649,7 @@
           <video controls preload="metadata" src="videos/molmoact2_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
         <article class="video-panel">
-          <header><h4>pi0.5-libero</h4><span class="status fail">抓了 bowl，不是 cream cheese</span></header>
+          <header><h4>pi0.5-libero</h4><span class="status fail">0/5 抓对</span></header>
           <video controls preload="metadata" src="videos/pi05_05_object_swap_cream_cheese_drawer.mp4"></video>
         </article>
       </div>
@@ -714,6 +715,71 @@
           <article class="seed-card">
             <h4>Seed 2004</h4>
             <video controls preload="metadata" src="videos/molmoact2_05_cream_cheese_seed2004.mp4"></video>
+          </article>
+        </div>
+      </div>
+      <div class="seed-check">
+        <h3>05 pi0.5 复跑稳定性</h3>
+        <p class="small">
+          pi0.5 复跑 5 次没有一次选中 cream cheese。前 4 次自动 success 为 true，
+          但这是因为它完成了原始 BDDL 的 <code>bowl -> top drawer</code>，不是完成当前自定义指令。
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Seed</th>
+              <th>人工观察</th>
+              <th>结论</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>3000</code></td>
+              <td>抓了 bowl，并放进 drawer；没有抓 cream cheese。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>3001</code></td>
+              <td>抓了 bowl，并放进 drawer；没有抓 cream cheese。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>3002</code></td>
+              <td>抓了 bowl，并放进 drawer；没有抓 cream cheese。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>3003</code></td>
+              <td>抓了 bowl，并放进 drawer；没有抓 cream cheese。</td>
+              <td><span class="status fail">回到原始任务</span></td>
+            </tr>
+            <tr>
+              <td><code>3004</code></td>
+              <td>没有抓 cream cheese，也没有完成有效放置。</td>
+              <td><span class="status fail">失败</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card">
+            <h4>Seed 3000</h4>
+            <video controls preload="metadata" src="videos/pi05_05_cream_cheese_seed3000.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 3001</h4>
+            <video controls preload="metadata" src="videos/pi05_05_cream_cheese_seed3001.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 3002</h4>
+            <video controls preload="metadata" src="videos/pi05_05_cream_cheese_seed3002.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 3003</h4>
+            <video controls preload="metadata" src="videos/pi05_05_cream_cheese_seed3003.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 3004</h4>
+            <video controls preload="metadata" src="videos/pi05_05_cream_cheese_seed3004.mp4"></video>
           </article>
         </div>
       </div>

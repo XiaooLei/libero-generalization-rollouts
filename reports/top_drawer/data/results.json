@@ -39,6 +39,40 @@
           "video": "videos/molmoact2_05_cream_cheese_seed2004.mp4"
         }
       ]
+    },
+    {
+      "case_id": "05_object_swap_cream_cheese_drawer",
+      "model": "pi0.5-libero",
+      "instruction": "open the drawer and put the cream cheese inside",
+      "num_trials": 5,
+      "manual_summary": "0/5 selected cream cheese; 4/5 reverted to the original bowl -> top drawer task; 1/5 did not complete a valid placement",
+      "trials": [
+        {
+          "seed": 3000,
+          "manual_check": "fail: picked bowl and placed it in the drawer, not cream cheese",
+          "video": "videos/pi05_05_cream_cheese_seed3000.mp4"
+        },
+        {
+          "seed": 3001,
+          "manual_check": "fail: picked bowl and placed it in the drawer, not cream cheese",
+          "video": "videos/pi05_05_cream_cheese_seed3001.mp4"
+        },
+        {
+          "seed": 3002,
+          "manual_check": "fail: picked bowl and placed it in the drawer, not cream cheese",
+          "video": "videos/pi05_05_cream_cheese_seed3002.mp4"
+        },
+        {
+          "seed": 3003,
+          "manual_check": "fail: picked bowl and placed it in the drawer, not cream cheese",
+          "video": "videos/pi05_05_cream_cheese_seed3003.mp4"
+        },
+        {
+          "seed": 3004,
+          "manual_check": "fail: did not pick cream cheese or complete the requested placement",
+          "video": "videos/pi05_05_cream_cheese_seed3004.mp4"
+        }
+      ]
     }
   ],
   "rollouts": [
