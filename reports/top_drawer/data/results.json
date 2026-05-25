@@ -101,54 +101,6 @@
         "steps": 192,
         "video": "videos/pi05_05_object_swap_cream_cheese_drawer.mp4"
       }
-    },
-    {
-      "id": "06",
-      "case_id": "06_relation_swap_bowl_on_plate",
-      "type": "relation swap",
-      "instruction": "put the bowl on the plate",
-      "molmoact2": {
-        "manual_check": "pass: put bowl on plate",
-        "steps": 300,
-        "video": "videos/molmoact2_06_relation_swap_bowl_on_plate.mp4"
-      },
-      "pi05": {
-        "manual_check": "pass: put bowl on plate",
-        "steps": 300,
-        "video": "videos/pi05_06_relation_swap_bowl_on_plate.mp4"
-      }
-    },
-    {
-      "id": "07",
-      "case_id": "07_relation_swap_bowl_on_stove",
-      "type": "relation swap",
-      "instruction": "put the bowl on the stove",
-      "molmoact2": {
-        "manual_check": "pass: put bowl on stove",
-        "steps": 300,
-        "video": "videos/molmoact2_07_relation_swap_bowl_on_stove.mp4"
-      },
-      "pi05": {
-        "manual_check": "pass: put bowl on stove",
-        "steps": 300,
-        "video": "videos/pi05_07_relation_swap_bowl_on_stove.mp4"
-      }
-    },
-    {
-      "id": "08",
-      "case_id": "08_relation_swap_bowl_on_cabinet",
-      "type": "relation swap",
-      "instruction": "put the bowl on top of the cabinet",
-      "molmoact2": {
-        "manual_check": "pass: put bowl on top of cabinet",
-        "steps": 300,
-        "video": "videos/molmoact2_08_relation_swap_bowl_on_cabinet.mp4"
-      },
-      "pi05": {
-        "manual_check": "pass: put bowl on top of cabinet",
-        "steps": 300,
-        "video": "videos/pi05_08_relation_swap_bowl_on_cabinet.mp4"
-      }
     }
   ]
 }

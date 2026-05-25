@@ -11,7 +11,7 @@ official instruction: open the top drawer and put the bowl inside
 original benchmark behavior: bowl -> top drawer
 ```
 
-The key finding is based on manual video inspection. The modified-instruction results are mixed: some rollouts place the `bowl` in the top drawer even when the instruction asks for another behavior, while MolmoAct2 succeeds on `cream cheese -> drawer`, `bowl -> plate`, `bowl -> stove`, and `bowl -> cabinet`. pi0.5 succeeds on `bowl -> plate`, `bowl -> stove`, and `bowl -> cabinet`.
+The key finding is based on manual video inspection. The modified-instruction results are mixed: some rollouts place the `bowl` in the top drawer even when the instruction asks for another object, while MolmoAct2 succeeds on `cream cheese -> drawer`. pi0.5 picks the bowl in that same cream-cheese drawer case.
 
 ## Reports
 
@@ -37,4 +37,4 @@ The main report also includes a per-case explanation of what each rollout is int
 ## Notes
 
 - The report emphasizes manual video checks rather than automatic benchmark success.
-- Custom object-swap and relation-swap instructions are OOD probes for this fixed task, not standard LIBERO benchmark tasks.
+- Custom object-swap instructions are OOD probes for this fixed task, not standard LIBERO benchmark tasks.
