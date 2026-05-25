@@ -11,7 +11,7 @@ official instruction: open the top drawer and put the bowl inside
 original benchmark behavior: bowl -> top drawer
 ```
 
-The key finding is based on manual video inspection. In several object-swap rollouts, the policy places the `bowl` in the top drawer even though the custom instruction asks for a different object such as `plate`, `wine bottle`, or `cream cheese`.
+The key finding is based on manual video inspection. In several custom object-swap rollouts, the policy places the `bowl` in the top drawer even though the custom instruction asks for a different object such as `plate`, `wine bottle`, or `cream cheese`.
 
 ## Reports
 
@@ -34,4 +34,4 @@ The `reports/top_drawer/` directory is self-contained. It can be served through 
 ## Notes
 
 - The report emphasizes manual video checks rather than automatic benchmark success.
-- Object-swap and relation-swap instructions are OOD probes, not standard LIBERO benchmark tasks.
+- Custom object-swap and relation-swap instructions are OOD probes for this fixed task, not standard LIBERO benchmark tasks.

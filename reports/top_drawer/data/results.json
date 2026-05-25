@@ -57,7 +57,7 @@
     {
       "id": "03",
       "case_id": "03_object_swap_plate_drawer",
-      "type": "object swap",
+      "type": "custom object swap",
       "instruction": "open the drawer and put the plate inside",
       "molmoact2": {
         "manual_check": "fail: picked bowl, not plate",
@@ -73,7 +73,7 @@
     {
       "id": "04",
       "case_id": "04_object_swap_wine_bottle_drawer",
-      "type": "object swap",
+      "type": "custom object swap",
       "instruction": "open the drawer and put the wine bottle inside",
       "molmoact2": {
         "manual_check": "fail: picked bowl, not wine bottle",
@@ -89,7 +89,7 @@
     {
       "id": "05",
       "case_id": "05_object_swap_cream_cheese_drawer",
-      "type": "object swap",
+      "type": "custom object swap",
       "instruction": "open the drawer and put the cream cheese inside",
       "molmoact2": {
         "manual_check": "original goal not completed",

@@ -19,10 +19,10 @@ The public report emphasizes manual video checks. Automatic benchmark success is
 |---|---|
 | Official task | The original LIBERO instruction and benchmark behavior. |
 | Paraphrase | Same object and same goal, different wording. |
-| Object swap | Same drawer goal, but the requested object is changed. |
+| Custom object swap | Same drawer goal, but the requested object is changed. The object may appear in LIBERO, but the full instruction is custom for this fixed task. |
 | Relation swap | The requested spatial relation is changed. |
 
-Object-swap and relation-swap cases are not standard LIBERO benchmark tasks. They are used here as probes for instruction following and compositional generalization.
+Custom object-swap and relation-swap cases are not standard LIBERO benchmark tasks for this fixed environment. They are used here as probes for instruction following and compositional generalization.
 
 ## How to Read Results
 
