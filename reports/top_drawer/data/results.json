@@ -143,6 +143,41 @@
           "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6004.mp4"
         }
       ]
+    },
+    {
+      "case_id": "08_relation_swap_cream_cheese_on_plate",
+      "model": "MolmoAct2-LIBERO",
+      "instruction": "put the cream cheese on the plate",
+      "num_trials": 5,
+      "max_steps": 500,
+      "manual_summary": "5/5 selected cream cheese, but 0/5 placed it on the plate; all runs appeared to place cream cheese in/on the bowl instead, matching the official cream cheese -> bowl prior",
+      "trials": [
+        {
+          "seed": 7000,
+          "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate",
+          "video": "videos/molmoact2_08_cream_cheese_on_plate_seed7000.mp4"
+        },
+        {
+          "seed": 7001,
+          "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate",
+          "video": "videos/molmoact2_08_cream_cheese_on_plate_seed7001.mp4"
+        },
+        {
+          "seed": 7002,
+          "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate",
+          "video": "videos/molmoact2_08_cream_cheese_on_plate_seed7002.mp4"
+        },
+        {
+          "seed": 7003,
+          "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate",
+          "video": "videos/molmoact2_08_cream_cheese_on_plate_seed7003.mp4"
+        },
+        {
+          "seed": 7004,
+          "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate",
+          "video": "videos/molmoact2_08_cream_cheese_on_plate_seed7004.mp4"
+        }
+      ]
     }
   ],
   "rollouts": [
@@ -267,6 +302,22 @@
         "manual_check": "fail: 0/5 used bottom drawer; all 5 reverted to bowl -> top drawer",
         "steps": 500,
         "video": "videos/molmoact2_07_bowl_bottom_drawer_seed6000.mp4"
+      },
+      "pi05": {
+        "manual_check": "not run",
+        "steps": null,
+        "video": null
+      }
+    },
+    {
+      "id": "08",
+      "case_id": "08_relation_swap_cream_cheese_on_plate",
+      "type": "custom relation swap",
+      "instruction": "put the cream cheese on the plate",
+      "molmoact2": {
+        "manual_check": "fail: 5/5 picked cream cheese, but 0/5 placed it on the plate; behavior matched cream cheese -> bowl prior",
+        "steps": 500,
+        "video": "videos/molmoact2_08_cream_cheese_on_plate_seed7000.mp4"
       },
       "pi05": {
         "manual_check": "not run",

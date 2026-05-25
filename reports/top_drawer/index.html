@@ -365,7 +365,7 @@
           <span>对比模型</span>
         </div>
         <div class="metric">
-          <strong>32</strong>
+          <strong>37</strong>
           <span>rollout 视频</span>
         </div>
         <div class="metric">
@@ -379,7 +379,8 @@
         MolmoAct2 对 <code>cream cheese -> drawer</code> 的 5 次复跑都选中了 cream cheese，
         但只有 3 次干净放入 drawer；进一步要求 <code>cream cheese -> bottom drawer</code> 时，
         MolmoAct2 0/5 完成完整组合；只测试 <code>bowl -> bottom drawer</code> 时也 0/5 使用 bottom drawer，
-        说明当前正例不能简单外推到更强组合。
+        说明当前正例不能简单外推到更强组合。新的 <code>cream cheese -> plate</code> 测试中，
+        MolmoAct2 5/5 抓对 cream cheese，但 0/5 放到 plate，上游物体 grounding 和目标关系组合出现分离。
         pi0.5 的 5 次复跑 0 次选中 cream cheese，其中 4 次回到原始 bowl 任务。
       </div>
     </div>
@@ -481,6 +482,13 @@
           <td><span class="status fail">0/5 使用 bottom drawer</span></td>
           <td><span class="status neutral">未跑</span></td>
         </tr>
+        <tr>
+          <td><code>08</code></td>
+          <td>自定义关系替换</td>
+          <td>put the cream cheese on the plate</td>
+          <td><span class="status fail">5/5 抓对；0/5 放到 plate</span></td>
+          <td><span class="status neutral">未跑</span></td>
+        </tr>
       </tbody>
     </table>
 
@@ -497,6 +505,8 @@
       1 次抓对 cream cheese 但仍使用 top drawer，4 次回到 bowl -> top drawer。
       进一步拆开看，只换目标位置的 <code>bowl -> bottom drawer</code> 也 0/5 成功，
       说明主要瓶颈不只是对象组合，而是当前场景里 top drawer prior 很强。
+      新增的 <code>cream cheese -> plate</code> 进一步显示：MolmoAct2 能稳定选中 cream cheese，
+      但 5 次都没有放到 plate，而是偏向官方任务中已有的 <code>cream cheese -> bowl</code> 关系。
       因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
     </div>
 
@@ -533,6 +543,10 @@
         <tr>
           <th>目标位置失败例子</th>
           <td>MolmoAct2 在 <code>bowl -> bottom drawer</code> 上 0/5 使用 bottom drawer，5 次都回到 <code>bowl -> top drawer</code>。</td>
+        </tr>
+        <tr>
+          <th>关系组合失败例子</th>
+          <td>MolmoAct2 在 <code>cream cheese -> plate</code> 上 5/5 抓对 cream cheese，但 0/5 放到 plate，实际更像执行了官方已有的 <code>cream cheese -> bowl</code> 关系。</td>
         </tr>
       </tbody>
     </table>
@@ -973,6 +987,85 @@
       </div>
     </section>
 
+    <section class="case">
+      <div class="case-head">
+        <div>
+          <h3>08 自定义关系替换：cream cheese -> plate</h3>
+          <div class="case-meta">put the cream cheese on the plate</div>
+        </div>
+      </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>弱组合测试：对象使用 <code>cream cheese</code>，目标关系从官方已有的 bowl 关系改成 plate。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span>官方任务中有 <code>cream cheese -> bowl</code> 和 <code>bowl -> plate</code>，但没有 <code>cream cheese -> plate</code> exact instruction。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>MolmoAct2 5/5 抓对 cream cheese，但 0/5 放到 plate；实际行为更像 cream cheese -> bowl。</span></div>
+      </div>
+      <div class="seed-check">
+        <h3>08 MolmoAct2 复跑稳定性</h3>
+        <p class="small">
+          本 case 使用 <code>max_steps=500</code>。自动 success 全是 false，因为原始 BDDL 仍检查
+          <code>bowl -> top drawer</code>。人工检查重点是是否抓 cream cheese，以及最终是否放到 plate。
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Seed</th>
+              <th>人工观察</th>
+              <th>结论</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>7000</code></td>
+              <td>抓了 cream cheese，但放到 bowl 里/上，而不是 plate。</td>
+              <td><span class="status fail">目标关系错误</span></td>
+            </tr>
+            <tr>
+              <td><code>7001</code></td>
+              <td>抓了 cream cheese，但放到 bowl 里/上，而不是 plate。</td>
+              <td><span class="status fail">目标关系错误</span></td>
+            </tr>
+            <tr>
+              <td><code>7002</code></td>
+              <td>抓了 cream cheese，但放到 bowl 里/上，而不是 plate。</td>
+              <td><span class="status fail">目标关系错误</span></td>
+            </tr>
+            <tr>
+              <td><code>7003</code></td>
+              <td>抓了 cream cheese，但放到 bowl 里/上，而不是 plate。</td>
+              <td><span class="status fail">目标关系错误</span></td>
+            </tr>
+            <tr>
+              <td><code>7004</code></td>
+              <td>抓了 cream cheese，但放到 bowl 里/上，而不是 plate。</td>
+              <td><span class="status fail">目标关系错误</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card">
+            <h4>Seed 7000</h4>
+            <video controls preload="metadata" src="videos/molmoact2_08_cream_cheese_on_plate_seed7000.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 7001</h4>
+            <video controls preload="metadata" src="videos/molmoact2_08_cream_cheese_on_plate_seed7001.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 7002</h4>
+            <video controls preload="metadata" src="videos/molmoact2_08_cream_cheese_on_plate_seed7002.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 7003</h4>
+            <video controls preload="metadata" src="videos/molmoact2_08_cream_cheese_on_plate_seed7003.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Seed 7004</h4>
+            <video controls preload="metadata" src="videos/molmoact2_08_cream_cheese_on_plate_seed7004.mp4"></video>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <h2>附录：Official LIBERO Instructions（英文原文）</h2>
     <p class="small">
       这里列出 LIBERO 官方 130 条 benchmark instruction。所有 instruction 均保留英文原文，不做中文翻译，
@@ -1037,6 +1130,12 @@
           <td>open the bottom drawer of the cabinet and put the bowl inside</td>
           <td><span class="status fail">自定义目标替换</span></td>
           <td>无 exact match；相关官方任务包括 <code>libero_90</code> 中的 black bowl -> bottom drawer</td>
+        </tr>
+        <tr>
+          <td><code>08</code></td>
+          <td>put the cream cheese on the plate</td>
+          <td><span class="status fail">自定义关系替换</span></td>
+          <td>无 exact match；相关官方任务包括 <code>libero_goal/6</code> 的 cream cheese -> bowl 和 <code>libero_goal/8</code> 的 bowl -> plate</td>
         </tr>
       </tbody>
     </table>
