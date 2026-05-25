@@ -140,12 +140,12 @@
       "type": "relation swap",
       "instruction": "put the bowl on top of the cabinet",
       "molmoact2": {
-        "manual_check": "original goal not completed",
+        "manual_check": "pass: put bowl on top of cabinet",
         "steps": 300,
         "video": "videos/molmoact2_08_relation_swap_bowl_on_cabinet.mp4"
       },
       "pi05": {
-        "manual_check": "pending",
+        "manual_check": "pass: put bowl on top of cabinet",
         "steps": 300,
         "video": "videos/pi05_08_relation_swap_bowl_on_cabinet.mp4"
       }
