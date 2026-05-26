@@ -5,6 +5,7 @@
   "official_instruction": "open the top drawer and put the bowl inside",
   "original_benchmark_behavior": "bowl -> top drawer",
   "models": ["MolmoAct2-LIBERO", "pi0.5-libero"],
+  "exploratory_models": ["Cosmos-Policy-LIBERO-Predict2-2B"],
   "stability_checks": [
     {
       "case_id": "05_object_swap_cream_cheese_drawer",
@@ -178,6 +179,29 @@
           "video": "videos/molmoact2_08_cream_cheese_on_plate_seed7004.mp4"
         }
       ]
+    }
+  ],
+  "world_model_checks": [
+    {
+      "id": "cosmos_00",
+      "model": "Cosmos-Policy-LIBERO-Predict2-2B",
+      "instruction": "open the top drawer and put the bowl inside",
+      "type": "official smoke test",
+      "seed": 195,
+      "manual_check": "pass: completed the original bowl -> top drawer task",
+      "automatic_success": true,
+      "video": "videos/cosmos_policy_00_exact_train_like_bowl_drawer.mp4"
+    },
+    {
+      "id": "cosmos_08",
+      "model": "Cosmos-Policy-LIBERO-Predict2-2B",
+      "instruction": "put the cream cheese on the plate",
+      "type": "custom relation swap smoke test",
+      "seed": 195,
+      "manual_check": "fail: appeared to pick cream cheese, but did not place it on the plate; final behavior was closer to cream cheese -> bowl/near bowl",
+      "automatic_success": false,
+      "video": "videos/cosmos_policy_08_cream_cheese_on_plate_seed195.mp4",
+      "future_video": "videos/cosmos_policy_08_cream_cheese_on_plate_seed195_future.mp4"
     }
   ],
   "rollouts": [

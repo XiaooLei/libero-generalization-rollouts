@@ -353,7 +353,7 @@
     <div class="inner hero">
       <h1>LIBERO Top Drawer 指令泛化测试</h1>
       <p class="lead">
-        固定 <code>libero_goal/task_id=3</code> 环境，只改变传给 policy 的自然语言指令，重点观察官方 130 条 benchmark 里没有出现过的对象-目标组合。
+        固定 <code>libero_goal/task_id=3</code> 环境，只改变传给 policy 的自然语言指令，重点观察官方 130 条 benchmark 里没有出现过的对象-目标组合。主对比模型是 MolmoAct2-LIBERO 和 pi0.5-libero；Cosmos-Policy 作为探索性 world-model policy smoke test 单独记录。
       </p>
       <div class="summary-grid">
         <div class="metric">
@@ -361,11 +361,11 @@
           <span>固定 LIBERO task</span>
         </div>
         <div class="metric">
-          <strong>2</strong>
-          <span>对比模型</span>
+          <strong>2+1</strong>
+          <span>2 个主对比模型 + Cosmos 探索</span>
         </div>
         <div class="metric">
-          <strong>37</strong>
+          <strong>40</strong>
           <span>rollout 视频</span>
         </div>
         <div class="metric">
@@ -382,6 +382,7 @@
         说明当前正例不能简单外推到更强组合。新的 <code>cream cheese -> plate</code> 测试中，
         MolmoAct2 5/5 抓对 cream cheese，但 0/5 放到 plate，上游物体 grounding 和目标关系组合出现分离。
         pi0.5 的 5 次复跑 0 次选中 cream cheese，其中 4 次回到原始 bowl 任务。
+        Cosmos-Policy 单次 smoke test 能完成官方 baseline；在 <code>cream cheese -> plate</code> 上没有成功放到 plate。
       </div>
     </div>
   </header>
@@ -507,6 +508,9 @@
       说明主要瓶颈不只是对象组合，而是当前场景里 top drawer prior 很强。
       新增的 <code>cream cheese -> plate</code> 进一步显示：MolmoAct2 能稳定选中 cream cheese，
       但 5 次都没有放到 plate，而是偏向官方任务中已有的 <code>cream cheese -> bowl</code> 关系。
+      Cosmos-Policy-LIBERO-Predict2-2B 的初步 smoke test 显示它能完成官方 baseline；
+      但在同一个 <code>cream cheese -> plate</code> 自定义关系上，单次运行也没有把 cream cheese 放到 plate，
+      最终更接近放到 bowl 或 bowl 附近。这个结果目前只作为探索性观察，不和前两个模型的 5 次复跑做强结论比较。
       因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
     </div>
 
@@ -547,6 +551,10 @@
         <tr>
           <th>关系组合失败例子</th>
           <td>MolmoAct2 在 <code>cream cheese -> plate</code> 上 5/5 抓对 cream cheese，但 0/5 放到 plate，实际更像执行了官方已有的 <code>cream cheese -> bowl</code> 关系。</td>
+        </tr>
+        <tr>
+          <th>Cosmos-Policy smoke test</th>
+          <td>Cosmos-Policy 能完成官方 <code>bowl -> top drawer</code> baseline；在单次 <code>cream cheese -> plate</code> 自定义关系上没有成功放到 plate，结果更接近放到 bowl 或 bowl 附近。</td>
         </tr>
       </tbody>
     </table>
@@ -1061,6 +1069,66 @@
           <article class="seed-card">
             <h4>Seed 7004</h4>
             <video controls preload="metadata" src="videos/molmoact2_08_cream_cheese_on_plate_seed7004.mp4"></video>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <h2>Cosmos-Policy 探索性测试</h2>
+    <p class="small">
+      这里不是完整横向对比，只是确认 Cosmos-Policy-LIBERO-Predict2-2B 能否在同一环境中跑通，并初步观察它在同一个自定义关系 case 上的行为。
+      自定义 instruction 的自动 success 仍然不能直接使用，因为环境 BDDL 仍检查原始 <code>bowl -> top drawer</code>。
+    </p>
+    <section class="case">
+      <div class="case-head">
+        <div>
+          <h3>Cosmos-Policy smoke test</h3>
+          <div class="case-meta">official baseline + put the cream cheese on the plate</div>
+        </div>
+      </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>先验证模型能完成官方 baseline，再用同一自定义关系测试它是否能把 cream cheese 放到 plate。</span></div>
+        <div class="case-detail"><strong>官方关系</strong><span><code>cream cheese -> plate</code> 没有官方 exact match；相关官方关系包括 cream cheese -> bowl 和 bowl -> plate。</span></div>
+        <div class="case-detail"><strong>观察</strong><span>官方 baseline 成功；自定义关系单次失败，最终更像 cream cheese -> bowl/near bowl。</span></div>
+      </div>
+      <div class="seed-check">
+        <h3>Cosmos-Policy 单次结果</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Instruction</th>
+              <th>自动结果</th>
+              <th>人工观察</th>
+              <th>结论</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>open the top drawer and put the bowl inside</td>
+              <td><span class="status pass">success=True</span></td>
+              <td>完成原始 <code>bowl -> top drawer</code>。</td>
+              <td><span class="status pass">官方 baseline 成功</span></td>
+            </tr>
+            <tr>
+              <td>put the cream cheese on the plate</td>
+              <td><span class="status neutral">success=False</span></td>
+              <td>看起来抓起了 cream cheese，但没有放到 plate，最终更接近放到 bowl 或 bowl 附近。</td>
+              <td><span class="status fail">目标关系错误</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card">
+            <h4>Official baseline</h4>
+            <video controls preload="metadata" src="videos/cosmos_policy_00_exact_train_like_bowl_drawer.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Custom relation</h4>
+            <video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_seed195.mp4"></video>
+          </article>
+          <article class="seed-card">
+            <h4>Future prediction view</h4>
+            <video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_seed195_future.mp4"></video>
           </article>
         </div>
       </div>
