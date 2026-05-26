@@ -193,15 +193,58 @@
       "video": "videos/cosmos_policy_00_exact_train_like_bowl_drawer.mp4"
     },
     {
+      "id": "cosmos_05",
+      "model": "Cosmos-Policy-LIBERO-Predict2-2B",
+      "instruction": "open the drawer and put the cream cheese inside",
+      "type": "custom object swap stability check",
+      "num_trials": 5,
+      "max_steps": 500,
+      "manual_summary": "0/5 selected cream cheese; 5/5 reverted to the original bowl -> top drawer behavior. Automatic success was 5/5 because the original BDDL goal was satisfied.",
+      "trials": [
+        {"episode": 1, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese", "video": "videos/cosmos_policy_05_cream_cheese_drawer_ep1.mp4"},
+        {"episode": 2, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese", "video": "videos/cosmos_policy_05_cream_cheese_drawer_ep2.mp4"},
+        {"episode": 3, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese", "video": "videos/cosmos_policy_05_cream_cheese_drawer_ep3.mp4"},
+        {"episode": 4, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese", "video": "videos/cosmos_policy_05_cream_cheese_drawer_ep4.mp4"},
+        {"episode": 5, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese", "video": "videos/cosmos_policy_05_cream_cheese_drawer_ep5.mp4"}
+      ]
+    },
+    {
+      "id": "cosmos_06",
+      "model": "Cosmos-Policy-LIBERO-Predict2-2B",
+      "instruction": "open the bottom drawer of the cabinet and put the cream cheese inside",
+      "type": "custom object and target swap stability check",
+      "num_trials": 5,
+      "max_steps": 500,
+      "manual_summary": "0/5 completed cream cheese -> bottom drawer; 0/5 selected cream cheese. 3/5 automatic successes corresponded to reverting to the original bowl -> top drawer behavior.",
+      "trials": [
+        {"episode": 1, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese in the bottom drawer", "video": "videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep1.mp4"},
+        {"episode": 2, "automatic_success": false, "manual_check": "fail: did not complete cream cheese -> bottom drawer; cream cheese was not selected", "video": "videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep2.mp4"},
+        {"episode": 3, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese in the bottom drawer", "video": "videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep3.mp4"},
+        {"episode": 4, "automatic_success": true, "manual_check": "fail: picked bowl and placed it in the top drawer, not cream cheese in the bottom drawer", "video": "videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep4.mp4"},
+        {"episode": 5, "automatic_success": false, "manual_check": "fail: did not complete cream cheese -> bottom drawer; cream cheese was not selected", "video": "videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep5.mp4"}
+      ]
+    },
+    {
       "id": "cosmos_08",
       "model": "Cosmos-Policy-LIBERO-Predict2-2B",
       "instruction": "put the cream cheese on the plate",
-      "type": "custom relation swap smoke test",
-      "seed": 195,
-      "manual_check": "fail: appeared to pick cream cheese, but did not place it on the plate; final behavior was closer to cream cheese -> bowl/near bowl",
-      "automatic_success": false,
-      "video": "videos/cosmos_policy_08_cream_cheese_on_plate_seed195.mp4",
-      "future_video": "videos/cosmos_policy_08_cream_cheese_on_plate_seed195_future.mp4"
+      "type": "custom relation swap stability check",
+      "num_trials": 5,
+      "max_steps": 500,
+      "manual_summary": "5/5 selected cream cheese, but 0/5 placed it on the plate; 4/5 placed it in/on the bowl and 1/5 remained near the bowl/held near the bowl.",
+      "trials": [
+        {"episode": 1, "automatic_success": false, "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate", "video": "videos/cosmos_policy_08_cream_cheese_on_plate_ep1.mp4"},
+        {"episode": 2, "automatic_success": false, "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate", "video": "videos/cosmos_policy_08_cream_cheese_on_plate_ep2.mp4"},
+        {"episode": 3, "automatic_success": false, "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate", "video": "videos/cosmos_policy_08_cream_cheese_on_plate_ep3.mp4"},
+        {"episode": 4, "automatic_success": false, "manual_check": "fail: picked cream cheese, but placed it in/on the bowl rather than on the plate", "video": "videos/cosmos_policy_08_cream_cheese_on_plate_ep4.mp4"},
+        {"episode": 5, "automatic_success": false, "manual_check": "fail: picked cream cheese, but did not place it on the plate; final placement remained near the bowl", "video": "videos/cosmos_policy_08_cream_cheese_on_plate_ep5.mp4"}
+      ],
+      "previous_smoke_test": {
+        "seed": 195,
+        "manual_check": "fail: appeared to pick cream cheese, but did not place it on the plate; final behavior was closer to cream cheese -> bowl/near bowl",
+        "video": "videos/cosmos_policy_08_cream_cheese_on_plate_seed195.mp4",
+        "future_video": "videos/cosmos_policy_08_cream_cheese_on_plate_seed195_future.mp4"
+      }
     }
   ],
   "rollouts": [

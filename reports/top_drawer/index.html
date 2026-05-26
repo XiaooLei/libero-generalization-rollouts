@@ -365,7 +365,7 @@
           <span>2 个主对比模型 + Cosmos 探索</span>
         </div>
         <div class="metric">
-          <strong>40</strong>
+          <strong>55</strong>
           <span>rollout 视频</span>
         </div>
         <div class="metric">
@@ -382,7 +382,9 @@
         说明当前正例不能简单外推到更强组合。新的 <code>cream cheese -> plate</code> 测试中，
         MolmoAct2 5/5 抓对 cream cheese，但 0/5 放到 plate，上游物体 grounding 和目标关系组合出现分离。
         pi0.5 的 5 次复跑 0 次选中 cream cheese，其中 4 次回到原始 bowl 任务。
-        Cosmos-Policy 单次 smoke test 能完成官方 baseline；在 <code>cream cheese -> plate</code> 上没有成功放到 plate。
+        Cosmos-Policy 能完成官方 baseline，但在补跑的 3 组自定义 case 中也没有展现出更强的组合泛化：
+        <code>cream cheese -> drawer</code> 和 <code>cream cheese -> bottom drawer</code> 都回到 bowl/top drawer，
+        <code>cream cheese -> plate</code> 则抓对 cream cheese 但没有放到 plate。
       </div>
     </div>
   </header>
@@ -508,9 +510,10 @@
       说明主要瓶颈不只是对象组合，而是当前场景里 top drawer prior 很强。
       新增的 <code>cream cheese -> plate</code> 进一步显示：MolmoAct2 能稳定选中 cream cheese，
       但 5 次都没有放到 plate，而是偏向官方任务中已有的 <code>cream cheese -> bowl</code> 关系。
-      Cosmos-Policy-LIBERO-Predict2-2B 的初步 smoke test 显示它能完成官方 baseline；
-      但在同一个 <code>cream cheese -> plate</code> 自定义关系上，单次运行也没有把 cream cheese 放到 plate，
-      最终更接近放到 bowl 或 bowl 附近。这个结果目前只作为探索性观察，不和前两个模型的 5 次复跑做强结论比较。
+      Cosmos-Policy-LIBERO-Predict2-2B 能完成官方 baseline，但补跑 5 次后没有显示出比 MolmoAct2 更强的开放式组合泛化。
+      在 <code>cream cheese -> drawer</code> 上，Cosmos 5/5 自动 success，但人工检查都是 bowl -> top drawer；
+      在 <code>cream cheese -> bottom drawer</code> 上，Cosmos 0/5 完成完整组合且 0/5 选中 cream cheese；
+      在 <code>cream cheese -> plate</code> 上，Cosmos 5/5 选中 cream cheese，但 0/5 放到 plate。
       因此，当前观察更支持“泛化能力不稳定，需要逐 case 验证”，而不是“LIBERO 高分自然等价于开放式组合泛化能力”。
     </div>
 
@@ -554,7 +557,46 @@
         </tr>
         <tr>
           <th>Cosmos-Policy smoke test</th>
-          <td>Cosmos-Policy 能完成官方 <code>bowl -> top drawer</code> baseline；在单次 <code>cream cheese -> plate</code> 自定义关系上没有成功放到 plate，结果更接近放到 bowl 或 bowl 附近。</td>
+          <td>Cosmos-Policy 能完成官方 <code>bowl -> top drawer</code> baseline；补跑 3 组自定义 case 后，05/06 都强烈回到 bowl/top drawer，08 能抓 cream cheese 但放不到 plate。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>MolmoAct2 与 Cosmos-Policy 直接对比</h2>
+    <p class="small">
+      这里仅比较已经对齐复跑的自定义 case。自动 success 仍按原始 BDDL 判断，表中只使用人工检查结论。
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Case</th>
+          <th>Instruction（英文原文）</th>
+          <th>MolmoAct2-LIBERO</th>
+          <th>Cosmos-Policy-LIBERO-Predict2-2B</th>
+          <th>当前解读</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>05</code></td>
+          <td>open the drawer and put the cream cheese inside</td>
+          <td>5/5 抓对 cream cheese；3/5 clean 放入 drawer。</td>
+          <td>0/5 抓 cream cheese；5/5 回到 <code>bowl -> top drawer</code>。</td>
+          <td>这个 case 上 MolmoAct2 明显更强；Cosmos 的自动 5/5 success 是原始 BDDL success，不是自定义任务成功。</td>
+        </tr>
+        <tr>
+          <td><code>06</code></td>
+          <td>open the bottom drawer of the cabinet and put the cream cheese inside</td>
+          <td>0/5 完整成功；1/5 抓对 cream cheese 但用了 top drawer；4/5 回到 bowl。</td>
+          <td>0/5 完整成功；0/5 抓 cream cheese；3/5 回到原始 bowl/top drawer。</td>
+          <td>两者都没有完成强组合；MolmoAct2 至少出现一次对象 grounding，Cosmos 更强地被原始任务吸收。</td>
+        </tr>
+        <tr>
+          <td><code>08</code></td>
+          <td>put the cream cheese on the plate</td>
+          <td>5/5 抓对 cream cheese；0/5 放到 plate，偏向 cream cheese -> bowl。</td>
+          <td>5/5 抓对 cream cheese；0/5 放到 plate，4/5 放到 bowl，1/5 停在 bowl 附近。</td>
+          <td>两者对象 grounding 都可以，但目标关系组合都失败；Cosmos 的 value 预测接近 1 也没有对应真实成功。</td>
         </tr>
       </tbody>
     </table>
@@ -1074,62 +1116,115 @@
       </div>
     </section>
 
-    <h2>Cosmos-Policy 探索性测试</h2>
+    <h2>Cosmos-Policy 补跑结果</h2>
     <p class="small">
-      这里不是完整横向对比，只是确认 Cosmos-Policy-LIBERO-Predict2-2B 能否在同一环境中跑通，并初步观察它在同一个自定义关系 case 上的行为。
-      自定义 instruction 的自动 success 仍然不能直接使用，因为环境 BDDL 仍检查原始 <code>bowl -> top drawer</code>。
+      Cosmos-Policy-LIBERO-Predict2-2B 能完成官方 baseline。下面是和 MolmoAct2 对齐后的 3 组自定义 case，每组 5 次，<code>max_steps=500</code>。
+      自动 success 仍然不能直接使用，因为环境 BDDL 仍检查原始 <code>bowl -> top drawer</code>。
     </p>
     <section class="case">
       <div class="case-head">
         <div>
-          <h3>Cosmos-Policy smoke test</h3>
-          <div class="case-meta">official baseline + put the cream cheese on the plate</div>
+          <h3>Cosmos-Policy：05 cream cheese -> drawer</h3>
+          <div class="case-meta">open the drawer and put the cream cheese inside</div>
         </div>
       </div>
       <div class="case-details">
-        <div class="case-detail"><strong>测试意义</strong><span>先验证模型能完成官方 baseline，再用同一自定义关系测试它是否能把 cream cheese 放到 plate。</span></div>
-        <div class="case-detail"><strong>官方关系</strong><span><code>cream cheese -> plate</code> 没有官方 exact match；相关官方关系包括 cream cheese -> bowl 和 bowl -> plate。</span></div>
-        <div class="case-detail"><strong>观察</strong><span>官方 baseline 成功；自定义关系单次失败，最终更像 cream cheese -> bowl/near bowl。</span></div>
+        <div class="case-detail"><strong>测试意义</strong><span>对照 MolmoAct2 的正向 case：是否能把官方物体 cream cheese 组合到 drawer 目标。</span></div>
+        <div class="case-detail"><strong>自动结果</strong><span>5/5 automatic success，但这是原始 BDDL 的 <code>bowl -> top drawer</code> success。</span></div>
+        <div class="case-detail"><strong>人工观察</strong><span>0/5 抓 cream cheese；5/5 都回到 <code>bowl -> top drawer</code>。</span></div>
       </div>
       <div class="seed-check">
-        <h3>Cosmos-Policy 单次结果</h3>
+        <h3>05 Cosmos-Policy 复跑稳定性</h3>
         <table>
           <thead>
-            <tr>
-              <th>Instruction</th>
-              <th>自动结果</th>
-              <th>人工观察</th>
-              <th>结论</th>
-            </tr>
+            <tr><th>Episode</th><th>自动结果</th><th>人工观察</th><th>结论</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>open the top drawer and put the bowl inside</td>
-              <td><span class="status pass">success=True</span></td>
-              <td>完成原始 <code>bowl -> top drawer</code>。</td>
-              <td><span class="status pass">官方 baseline 成功</span></td>
-            </tr>
-            <tr>
-              <td>put the cream cheese on the plate</td>
-              <td><span class="status neutral">success=False</span></td>
-              <td>看起来抓起了 cream cheese，但没有放到 plate，最终更接近放到 bowl 或 bowl 附近。</td>
-              <td><span class="status fail">目标关系错误</span></td>
-            </tr>
+            <tr><td><code>1</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer，没有抓 cream cheese。</td><td><span class="status fail">回到原始任务</span></td></tr>
+            <tr><td><code>2</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer，没有抓 cream cheese。</td><td><span class="status fail">回到原始任务</span></td></tr>
+            <tr><td><code>3</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer，没有抓 cream cheese。</td><td><span class="status fail">回到原始任务</span></td></tr>
+            <tr><td><code>4</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer，没有抓 cream cheese。</td><td><span class="status fail">回到原始任务</span></td></tr>
+            <tr><td><code>5</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer，没有抓 cream cheese。</td><td><span class="status fail">回到原始任务</span></td></tr>
           </tbody>
         </table>
         <div class="seed-grid">
-          <article class="seed-card">
-            <h4>Official baseline</h4>
-            <video controls preload="metadata" src="videos/cosmos_policy_00_exact_train_like_bowl_drawer.mp4"></video>
-          </article>
-          <article class="seed-card">
-            <h4>Custom relation</h4>
-            <video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_seed195.mp4"></video>
-          </article>
-          <article class="seed-card">
-            <h4>Future prediction view</h4>
-            <video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_seed195_future.mp4"></video>
-          </article>
+          <article class="seed-card"><h4>Episode 1</h4><video controls preload="metadata" src="videos/cosmos_policy_05_cream_cheese_drawer_ep1.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 2</h4><video controls preload="metadata" src="videos/cosmos_policy_05_cream_cheese_drawer_ep2.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 3</h4><video controls preload="metadata" src="videos/cosmos_policy_05_cream_cheese_drawer_ep3.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 4</h4><video controls preload="metadata" src="videos/cosmos_policy_05_cream_cheese_drawer_ep4.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 5</h4><video controls preload="metadata" src="videos/cosmos_policy_05_cream_cheese_drawer_ep5.mp4"></video></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="case">
+      <div class="case-head">
+        <div>
+          <h3>Cosmos-Policy：06 cream cheese -> bottom drawer</h3>
+          <div class="case-meta">open the bottom drawer of the cabinet and put the cream cheese inside</div>
+        </div>
+      </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>同时换对象和目标 drawer，测试更强组合泛化。</span></div>
+        <div class="case-detail"><strong>自动结果</strong><span>3/5 automatic success，但这些仍是原始 BDDL success。</span></div>
+        <div class="case-detail"><strong>人工观察</strong><span>0/5 完成 cream cheese -> bottom drawer；0/5 抓 cream cheese。</span></div>
+      </div>
+      <div class="seed-check">
+        <h3>06 Cosmos-Policy 复跑稳定性</h3>
+        <table>
+          <thead>
+            <tr><th>Episode</th><th>自动结果</th><th>人工观察</th><th>结论</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>1</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer；没有使用 bottom drawer。</td><td><span class="status fail">回到原始任务</span></td></tr>
+            <tr><td><code>2</code></td><td><span class="status neutral">success=False</span></td><td>没有完成 cream cheese -> bottom drawer，也没有抓 cream cheese。</td><td><span class="status fail">失败</span></td></tr>
+            <tr><td><code>3</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer；没有使用 bottom drawer。</td><td><span class="status fail">回到原始任务</span></td></tr>
+            <tr><td><code>4</code></td><td><span class="status pass">success=True</span></td><td>抓 bowl 并放进 top drawer；没有使用 bottom drawer。</td><td><span class="status fail">回到原始任务</span></td></tr>
+            <tr><td><code>5</code></td><td><span class="status neutral">success=False</span></td><td>没有完成 cream cheese -> bottom drawer，也没有抓 cream cheese。</td><td><span class="status fail">失败</span></td></tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card"><h4>Episode 1</h4><video controls preload="metadata" src="videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep1.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 2</h4><video controls preload="metadata" src="videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep2.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 3</h4><video controls preload="metadata" src="videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep3.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 4</h4><video controls preload="metadata" src="videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep4.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 5</h4><video controls preload="metadata" src="videos/cosmos_policy_06_cream_cheese_bottom_drawer_ep5.mp4"></video></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="case">
+      <div class="case-head">
+        <div>
+          <h3>Cosmos-Policy：08 cream cheese -> plate</h3>
+          <div class="case-meta">put the cream cheese on the plate</div>
+        </div>
+      </div>
+      <div class="case-details">
+        <div class="case-detail"><strong>测试意义</strong><span>测试目标关系组合：能否把 cream cheese 从官方已有 bowl 关系改到 plate。</span></div>
+        <div class="case-detail"><strong>自动结果</strong><span>0/5 automatic success；原始 BDDL 不适用于该自定义 instruction。</span></div>
+        <div class="case-detail"><strong>人工观察</strong><span>5/5 抓 cream cheese，但 0/5 放到 plate；多数放到 bowl。</span></div>
+      </div>
+      <div class="seed-check">
+        <h3>08 Cosmos-Policy 复跑稳定性</h3>
+        <table>
+          <thead>
+            <tr><th>Episode</th><th>自动结果</th><th>人工观察</th><th>结论</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>1</code></td><td><span class="status neutral">success=False</span></td><td>抓 cream cheese，但放到 bowl 里/上，不是 plate。</td><td><span class="status fail">目标关系错误</span></td></tr>
+            <tr><td><code>2</code></td><td><span class="status neutral">success=False</span></td><td>抓 cream cheese，但放到 bowl 里/上，不是 plate。</td><td><span class="status fail">目标关系错误</span></td></tr>
+            <tr><td><code>3</code></td><td><span class="status neutral">success=False</span></td><td>抓 cream cheese，但放到 bowl 里/上，不是 plate。</td><td><span class="status fail">目标关系错误</span></td></tr>
+            <tr><td><code>4</code></td><td><span class="status neutral">success=False</span></td><td>抓 cream cheese，但放到 bowl 里/上，不是 plate。</td><td><span class="status fail">目标关系错误</span></td></tr>
+            <tr><td><code>5</code></td><td><span class="status neutral">success=False</span></td><td>抓 cream cheese，但没有放到 plate；最终停在 bowl 附近。</td><td><span class="status fail">目标关系错误</span></td></tr>
+          </tbody>
+        </table>
+        <div class="seed-grid">
+          <article class="seed-card"><h4>Episode 1</h4><video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_ep1.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 2</h4><video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_ep2.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 3</h4><video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_ep3.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 4</h4><video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_ep4.mp4"></video></article>
+          <article class="seed-card"><h4>Episode 5</h4><video controls preload="metadata" src="videos/cosmos_policy_08_cream_cheese_on_plate_ep5.mp4"></video></article>
         </div>
       </div>
     </section>
